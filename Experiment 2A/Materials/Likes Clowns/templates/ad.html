@@ -1,0 +1,78 @@
+<!doctype html>
+
+<html>
+	<head>
+		<title>Psychology Experiment</title>
+		<link rel=stylesheet href="/static/css/bootstrap.min.css" type="text/css">
+		<link rel="Favicon" href="{{ server_location }}/static/favicon.ico" />
+		<style>
+			/* these tyles need to be defined locally */
+			body {
+			    padding:0px;
+			    margin: 0px;
+			    background-color: white;
+			    color: black;
+			    font-weight: normal; 
+			    font-size: 13pt;
+			}
+
+			/* ad.html  - the ad that people view first */
+			#adlogo {
+			    float: right;
+			    width: 110px;
+			    padding: 20px 0 0 0;
+			}
+
+			#container-ad {
+			    position: absolute;
+			    top: 0px; /* Header Height */
+			    bottom: 0px; /* Footer Height */
+			    left: 0px;
+			    right: 0px;
+			    padding: 100px;
+			    padding-top: 5%;
+			    border: 18px solid #f3f3f3;
+			    background: white;
+			}
+		</style>
+	</head>
+	<body>
+		<div id="container-ad">
+
+			<div id="ad">
+				<div class="row">
+					<div class="col-xs-2">
+						<img id="adlogo" src="{{ server_location }}/static/images/r.png" alt="Lab Logo" />
+					</div>
+					<div class="col-xs-10">
+
+							{% if assignmentid == "ASSIGNMENT_ID_NOT_AVAILABLE" %}
+
+                                <h1>Rate explanations for someone's behavior</h1>
+                                <p>This HIT will take about 5 minutes to complete and will pay you $0.25. Press 'Accept HIT' to accept the HIT.</p>
+
+							{% else %}
+							
+							    <h1>Thank you for accepting this HIT!</h1>
+							    <p>Click the link below to begin the experiment.</p>
+							    <script>
+									function openwindow() {
+							    		popup = window.open('{{ server_location }}/consent?hitId={{ hitid }}&assignmentId={{ assignmentid }}&workerId={{ workerid }}','Popup','toolbar=no,location=no,status=no,menubar=no,scrollbars=yes,resizable=no,width='+1024+',height='+768+'');
+							  		}
+							    </script>
+							    <div class="alert alert-warning">
+							    	<b>Warning</b>: Please disable pop-up blockers before continuing.
+							    </div>
+							    
+						    	<button type="button" class="btn btn-primary" onClick="openwindow();">
+								  Begin Experiment
+								</button>
+
+
+							{% endif %}
+
+					</div>
+			</div>
+		</div>
+	</body>
+</html>
