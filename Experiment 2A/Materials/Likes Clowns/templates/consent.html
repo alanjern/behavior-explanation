@@ -1,0 +1,47 @@
+<!doctype html>
+
+<html>
+    <head>
+        <title>Psychology Experiment Consent Form</title>
+        <link rel=stylesheet href="/static/css/bootstrap.min.css" type="text/css">
+        <link rel=stylesheet href="/static/css/style.css" type="text/css">
+        <script type="text/javascript">
+            function onexit() {
+              self.close(); // no harm, no foul here
+            }
+        </script>
+    </head>
+    <body>
+        <div id="container-consent">
+            <div id="consent">
+                <h1>Consent form</h1>
+                <hr>
+                <div class="legal well">
+                    <p>You are being invited to participate in a research study about human reasoning. This study is being conducted by Alan Jern, Ph.D., from the Department of Humanities and Social Sciences at Rose-Hulman Institute of Technology. There are no known risks or costs if you decide to participate in this research study. In this study, you will be asked to answer a few questions or make some judgments. There are no right or wrong answers. We are only interested in whether people tend to give similar answers. The information collected may not benefit you directly, but the information learned in this study could help us to better understand how people think and reason. Your responses will be held confidential and the data will be stored in a way that will not link your responses to your identity in any way. Your participation in this study is voluntary. By completing the survey, you are voluntarily agreeing to participate. If you have any questions about the study, please contact Alan Jern at <a href="mailto:jern@rose-hulman.edu">jern@rose-hulman.edu</a>. If you have any questions about your rights as a research subject or if you feel you’ve been placed at risk, you may contact the Institutional Reviewer, Daniel Morris, by phone at (812) 877-8314, or by e-mail at <a href="mailto:morris@rose-hulman.edu">morris@rose-hulman.edu</a>.</p>
+
+                    <button type="button" class="btn btn-default btn-sm" onClick="window.print();">
+                    <span class="glyphicon glyphicon-print"></span> Print a copy
+                    </button>
+                </div>
+
+                <hr>
+                <h4>Do you understand and consent to these terms?</h4>
+                <br>
+
+                <center>
+                    <button type="button" class="btn btn-primary btn-lg" onClick="window.location='/exp?hitId={{ hitid }}&assignmentId={{ assignmentid }}&workerId={{ workerid }}'">
+                    <span class="glyphicon glyphicon-ok"></span> I agree 
+                    </button>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    <button type="button" class="btn btn-danger btn-lg" onClick="onexit()">
+                    <span class="glyphicon glyphicon-ban-circle"></span> No thanks, I don't want to do this HIT
+                    </button>
+                </center>
+
+            </div>
+        </div>
+    </body>
+</html>
+

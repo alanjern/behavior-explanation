@@ -1,0 +1,294 @@
+Subject,Trial,Section,Explanation 0,Explanation 1,Explanation 2,Explanation 3,Explanation 4,Explanation 5,Explanation 6,Explanation 7,Explanation 8,Explanation 9,Explanation 10,Explanation 11,Explanation 12,Reasoning
+--,1,1,3.78,6.54,2.28,2.5,2.96,1.52,3.44,5.98,5.9,2.44,2.52,1.84,1.94,MEAN
+--,2,2,4.64,5.56,2.68,5.36,2.82,1.78,3.7,5,5.16,4.78,4.84,1.96,1.94,MEAN
+--,3,3,4.4,2.32,3.32,6.38,2.2,2.28,3.14,2.22,2.54,5.86,5.84,2.4,2.48,MEAN
+,,,,,,,,,,,,,,,,
+1,1,5,4,4,4,4,4,4,4,4,4,4,4,4,4,i feel no strong feelings one way or snother
+1,2,4,4,4,4,4,4,4,4,4,4,4,4,4,4,im like a neural planet there all good
+1,3,3,4,4,4,4,4,4,4,4,4,4,4,4,4,best spot in the house
+1,4,2,4,4,4,4,4,4,4,4,4,4,4,4,4,i feel that ba was th best
+,,,,,,,,,,,,,,,,
+2,1,1,2,7,2,2,2,2,2,4,4,2,2,2,2,Matt is  indifferent toward acrobats and magicians so he would just consider clowns and choose his seat accordingly.
+2,2,4,6,4,1,5,2,2,2,1,2,2,3,1,1,I think Alex was not sure about the stage with the clowns.
+2,3,3,2,1,2,7,1,1,2,1,2,1,2,1,2,Jacob is indifferent toward acrobats and magicians so I think he was sure that clowns would perform on stage B.
+2,4,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,
+,,,,,,,,,,,,,,,,
+3,1,1,4,7,1,1,7,1,7,7,7,1,1,1,1,David would want to sit in the area of proximity of his favorite performer.
+3,2,4,7,5,2,5,4,1,7,5,5,5,5,1,1,"""Since Jacob doesn't know where the performers are playing at on stage"
+3,3,3,5,1,7,7,1,1,6,1,1,7,7,1,1,"""Alex is sitting where he think his final performer will perform at"
+3,4,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,
+,,,,,,,,,,,,,,,,
+4,1,5,3,7,1,3,4,1,7,7,7,3,3,1,1,"""I think since Matt likes clowns"
+4,2,2,6,6,4,6,4,1,4,6,6,6,6,1,1,It would make the most sense if the clown was on state A or B since David likes clowns and his seat is close to both stages
+4,3,3,7,1,4,7,1,1,4,1,1,7,7,1,1,"""She likes clowns so her seat choice makes sense if she knew the clown was going to be on stage B"
+4,4,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,
+,,,,,,,,,,,,,,,,
+5,1,5,2,7,2,2,3,1,5,7,6,3,2,1,1,ya david like clowns so definetly the c then either a or b acrobats and magician.
+5,2,4,2,6,2,5,2,2,6,6,2,6,6,2,2,matt believed center of the a and c so between them.
+5,3,3,2,2,6,6,2,2,6,2,2,6,5,3,2,definitely the b is clown because the mark was exactly b. 
+5,4,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,
+,,,,,,,,,,,,,,,,
+6,1,5,3,1,5,4,3,1,6,3,1,5,4,5,5,David would obviously want to avoid the clowns.
+6,2,4,3,5,2,5,4,1,3,5,4,5,4,4,3,Jacob would choose seats that would make him closer to the clown. It's possible that he guessed where the clown would be or knew.
+6,3,3,4,2,5,6,2,2,2,3,2,6,5,3,3,Matt would choose seats that would bring him closer to the clown that he likes.
+6,4,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,
+,,,,,,,,,,,,,,,,
+7,1,1,7,7,1,2,1,1,4,7,7,1,1,1,1,Alex like clowns so it'd only make sense for him to choose A if the clown was performing there or he was unaware. 
+7,2,2,7,5,1,4,1,1,4,5,5,4,4,1,1,David likes clowns so you'd think he'd choose A unless he wanted to see both A and B or was unaware of where the acts were performing.
+7,3,3,7,1,1,7,1,1,1,1,1,7,7,1,1,"""He likes clowns so unless he thought the clown was on B or was unaware"
+7,4,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,
+,,,,,,,,,,,,,,,,
+8,1,1,1,7,3,4,4,1,4,4,7,5,3,1,1,I said that he thought the clowns would be on stage A or they could have been on B because he could still see them from there
+8,2,4,1,6,3,5,3,2,4,7,7,5,6,2,1,The clown could have been on either B or C
+8,3,3,3,2,2,7,2,5,4,4,4,7,5,4,4,he sat in the middle but the clown could have been on stage B
+8,4,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,
+,,,,,,,,,,,,,,,,
+9,1,1,4,7,3,1,2,1,5,4,4,1,1,4,4,"""Jacob would seat in front of stage A because he knows the clown would be there"
+9,2,4,5,6,1,6,3,6,6,5,6,6,5,1,1,"""Matt would pick the closest seat the the stage where he believes the clown would be"
+9,3,3,4,1,4,7,1,2,4,2,2,7,7,2,2,"""David wants to be closer the where he believes the clown would be"
+9,4,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,
+,,,,,,,,,,,,,,,,
+10,1,5,6,7,2,2,4,1,3,7,7,1,1,1,2,"""Mat was a fan of clowns"
+10,2,4,6,5,2,5,2,1,2,5,5,5,5,2,1,"""Jacob probably thought the clown would be on stage B or C"
+10,3,3,4,3,2,7,2,2,2,2,3,7,7,3,2,"""Alex probably though the clown would be in section B"
+10,4,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,
+,,,,,,,,,,,,,,,,
+11,1,1,3,7,1,1,1,1,1,7,7,3,2,1,1,"""Anything other than Matt believed that the clown would be on Stage A are bad explanations.  He may not have known where any of the performers would be and so that would be an """"OK"""" explanation."""
+11,2,2,4,5,1,5,1,1,1,5,5,5,5,1,1,"""Jacob would likely want to sit near where the clown would perform.  Perhaps"
+11,3,3,4,1,1,7,1,1,1,1,1,7,7,1,1,"""Again"
+11,4,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,
+,,,,,,,,,,,,,,,,
+12,1,1,4,7,1,3,4,1,4,6,6,2,7,1,1,"""Sitting in front of A makes sense if the clown is going to be in front of that section. Some of the other explanations that omit mention of where the clown performs makes no different. Explanations that the clown would be on stage B were bad"
+12,2,2,3,6,4,6,4,1,5,6,6,6,6,2,1,"""Since David chose a section between stages A and B"
+12,3,3,7,3,5,7,1,3,3,3,3,7,7,3,3,"""The middle seating section is a perfect explanation if either the clown performs on stage B"
+12,4,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,
+,,,,,,,,,,,,,,,,
+13,1,1,5,7,1,3,3,1,5,7,7,4,2,4,4,"""I think he believed that the clown would be on stage A"
+13,2,4,4,6,4,7,3,2,3,3,3,3,2,4,2,I think Jacob thought that the clown would be on stage B or C
+13,3,3,3,3,3,7,3,3,2,3,3,7,6,2,3,I think David would position himself in front of stage B if he thought the clown would be there
+13,4,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,
+,,,,,,,,,,,,,,,,
+14,1,1,2,7,1,1,2,1,2,7,7,1,1,1,1,"""The only two good reasons to sit specifically in front of A are to be in front of the clown or because he just"
+14,2,4,1,6,1,2,1,1,7,6,6,2,2,1,1,"""He's either maximizing his chances of having a good seat for the clown or"
+14,3,3,7,4,4,7,4,4,4,4,4,7,7,4,4,"""Sometimes a person just likes to sit in the middle so they can have at least an okay view of everything"
+14,4,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,
+,,,,,,,,,,,,,,,,
+15,1,1,4,7,2,2,3,1,3,5,4,1,2,1,1,The only reason seems to be if he had knowledge that the one act he liked was performing on stage A.
+15,2,4,4,5,3,5,3,1,2,5,3,5,4,1,1,I assumed he believed clowns would be on stage B or C.
+15,3,3,7,1,2,7,1,1,2,2,2,4,4,2,2,He might have known the clowns would be on B or had no idea and was hedging his bets.
+15,4,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,
+,,,,,,,,,,,,,,,,
+16,1,5,7,7,1,2,1,1,1,7,7,2,2,1,1,He liked clowns and thought they would be on C so he sat closer to there.
+16,2,2,7,6,1,5,1,1,7,4,7,5,6,1,3,He wanted to be closest to the clowns and thought they would be on A or B
+16,3,3,4,1,1,7,1,1,1,1,1,7,7,1,1,He wanted to see the clowns and assumed they would be on B
+16,4,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,
+,,,,,,,,,,,,,,,,
+17,1,5,7,7,1,1,2,2,1,2,7,5,1,1,2,"""I think he probably had marked where the clowns (the act he likes) was"
+17,2,2,7,2,2,6,1,2,2,2,2,6,7,4,3,"""With Matt liking the clown"
+17,3,3,7,1,1,7,1,2,1,1,1,7,7,1,5,"""With David liking the clown"
+17,4,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,
+,,,,,,,,,,,,,,,,
+18,1,5,7,7,5,5,4,1,6,7,7,5,5,1,1,They just made sense to me.  It seems as if Jacob didn't know that the clown would be on stage A.
+18,2,4,7,7,3,7,2,1,2,7,6,6,6,1,2,"""He was trying to split his position between B and C"
+18,3,3,7,1,2,7,1,4,3,2,3,7,7,4,4,I think he assumed that the clown would be on B.  
+18,4,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,
+,,,,,,,,,,,,,,,,
+19,1,1,1,7,2,2,4,2,4,6,6,2,2,1,2,He likes clowns so he probably sat where he thought the clown would be. That means he thought the acrobat and magician were on stages B and C.
+19,2,2,5,5,3,5,3,1,3,5,5,5,5,2,2,Matt either didn't know what to choose or chose to sit near the clown (either A or B) and have a chance at watching one of the others too.
+19,3,3,3,1,2,7,1,1,2,1,1,6,6,1,1,David likes clowns so he sat in front of the clown on Stage B. Therefore the acrobat and magician have to be on the other stages.
+19,4,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,
+,,,,,,,,,,,,,,,,
+20,1,1,2,5,2,2,2,2,2,2,2,2,2,2,2,jacob like the clown the best so it did not matter where the magician or the acrobat would be 
+20,2,2,2,6,2,2,2,2,2,2,2,2,2,2,2,alex likes clown also he picked this seat so he would be close to the clown and set next to alex
+20,3,3,2,2,2,6,2,2,2,2,2,2,6,2,2,matt believes the clown will be on b but if he in on c he will be able to see him better than alex or jeff
+20,4,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,
+,,,,,,,,,,,,,,,,
+21,1,1,6,7,2,2,5,1,5,6,6,3,3,1,2,"""IF HE THOUGHT THE CLOWN WOULD BE ON STAGE A - HE WOULD SIT THERE.   BECAAUSE HE IS INDIFFERENT TO THE OTHERS"
+21,2,4,5,6,5,4,4,3,5,6,5,4,4,3,5,SEE PREVIOUS
+21,3,3,3,3,3,7,3,3,3,3,2,3,3,2,3,SEE PRE
+21,4,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,
+,,,,,,,,,,,,,,,,
+22,1,5,6,5,5,4,6,5,5,6,5,6,6,5,6,just guess
+22,2,4,4,6,5,6,5,5,6,5,6,6,4,5,5,guess
+22,3,3,5,6,5,6,5,6,6,5,6,6,5,6,4,guess
+22,4,1,5,4,6,6,4,6,6,6,-1,5,5,6,5,guess
+,,,,,,,,,,,,,,,,
+23,1,5,3,7,4,5,2,1,4,7,7,2,5,1,2,"""I assume that any belief that Alex had about the positions of the acrobat and the magician were irrelevant to his decision"
+23,2,2,3,6,4,6,1,1,1,6,6,6,4,2,1,"""I assume David only made guesses about the clown. So while other explanations for other performers might be accurate"
+23,3,3,7,3,4,6,4,4,4,4,4,6,6,4,4,Either Jacob thought the clown would be on stage B or he didn't know where any of them would be and bet on the middle. I think...
+23,4,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,
+,,,,,,,,,,,,,,,,
+24,1,1,1,7,1,1,1,1,4,5,5,1,1,1,1,"""I chose the good explanation for any instance where the clown was on Stage A. If Alex likes clowns"
+24,2,2,7,5,1,6,1,1,1,5,5,5,5,1,1,"""I think David put himself there because he wasn't sure where the performers would be. If he likes clowns so much"
+24,3,3,1,1,1,7,1,1,1,1,1,6,7,1,1,"""Jacob must know where the clown is going to be since he likes clowns so much. So he seated himself right in front of where the clown will be performing. If he is indifferent toward the other acts"
+24,4,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,
+,,,,,,,,,,,,,,,,
+25,1,5,7,6,1,2,3,2,2,6,6,1,1,1,1,"""I assume that since Jacob doesn't particularly care about any of the performers other than the clown"
+25,2,4,7,5,2,5,1,1,2,5,5,5,5,1,1,"""If Matt likes clowns but doesn't care about the rest"
+25,3,3,6,2,1,6,1,1,1,1,1,6,6,2,2,"""If David likes clowns"
+25,4,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,
+,,,,,,,,,,,,,,,,
+26,1,1,4,7,2,3,2,1,3,7,7,3,3,1,1,"""David wants to be near the clown because he likes it. So if the clown is on A"
+26,2,4,5,7,2,7,2,1,6,1,7,7,7,1,1,Matt obviously wants to see two acts since he is in between two states. if the Clown is on B or C it is a good explanation because he likes clowns. If he believes the magician or acrobat is on A then he thinks the clown will be on B or C which is a good justification 
+26,3,3,6,1,5,7,1,1,2,1,2,7,7,1,1,"""Alex likes Clowns and is sitting on front of B"
+26,4,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,
+,,,,,,,,,,,,,,,,
+27,1,1,6,7,1,2,1,1,4,7,7,2,2,1,1,"""Anything that has Jacob next to the clown is a good explainatino"
+27,2,4,7,6,4,6,4,1,1,6,6,6,6,1,1,"""Didn't know is the best explanation"
+27,3,3,6,1,3,7,3,1,1,1,1,7,7,1,1,Didn't know and clown at B all fully explain his behavior.  Anything where he thinks the clown will be at another stage do not.  Two options that just explain where he thinks the magician will be are somewhat non responsive.
+27,4,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,
+,,,,,,,,,,,,,,,,
+28,1,5,1,7,1,3,5,1,4,6,6,1,1,1,1,"""He likes the clowns"
+28,2,4,1,4,3,3,4,6,3,4,4,3,2,2,3,He wants to be closer to the clowns
+28,3,3,3,4,4,3,4,3,4,3,3,4,3,3,4,He likes the clowns!
+28,4,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,
+,,,,,,,,,,,,,,,,
+29,1,1,2,7,1,1,2,2,6,2,7,2,5,3,4,The order of stages is based on how the story described fisrt.
+29,2,2,3,7,1,5,2,2,7,2,7,3,6,4,3,Same as the previous explanation
+29,3,3,2,6,2,7,1,3,7,1,4,5,7,5,3,same as before
+29,4,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,
+,,,,,,,,,,,,,,,,
+30,1,1,5,7,2,2,2,1,2,7,7,2,2,1,1,"""Jacob was interested in watching the clown. He would have optimal viewing if he believed the clown would be in section A (=7). Choosing A when he was sure his preferred act would be at C would be very foolish (=1). Anything else may have a tiny bit of logic to it"
+30,2,2,7,6,4,7,4,2,7,6,6,6,6,2,1,"""If Alex thought that the clowns would be in A or B"
+30,3,3,7,4,6,7,4,1,5,4,4,4,7,4,4,"""If Matt had no idea where the acts would be"
+30,4,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,
+,,,,,,,,,,,,,,,,
+31,1,1,2,7,2,2,1,2,1,7,7,2,2,2,2,He wanted to see the clown.
+31,2,2,4,6,2,5,2,2,2,6,5,5,6,2,2,He wanted to see the clown.
+31,3,3,3,2,2,7,2,2,1,2,1,6,6,2,2,Clown close
+31,4,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,
+,,,,,,,,,,,,,,,,
+32,1,5,1,7,1,1,1,1,1,7,7,1,1,1,1,Jacob only likes clowns.  The clown is on stage C.  Therefore anything but a clown on stage C is a bad explanation.
+32,2,4,5,6,2,6,1,1,1,6,6,6,6,1,1,Matt sat half way between B and C.  He could enjoy the clown on either B or C.  He would not enjoy the clown on A.
+32,3,3,6,4,1,7,1,4,1,5,3,7,6,3,4,This one was harder.  Alex sits in the middle so he/she can see the clown no matter where it is.   But it would be best if the clown is on stage B.
+32,4,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,
+,,,,,,,,,,,,,,,,
+33,1,1,1,7,1,1,1,1,1,5,5,1,1,1,1,it appears he is aware that the clown will be on stage A as he likes clowns and has chosen to sit by A
+33,2,4,3,5,1,5,1,1,1,5,5,5,5,1,1,he likes clowns and seems to be seated there so that the clown will either be on B or C
+33,3,3,2,1,1,7,7,1,1,1,1,7,7,1,1,he sat nearest the clown on B as he likes clowns
+33,4,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,
+,,,,,,,,,,,,,,,,
+34,1,5,5,4,4,5,5,5,6,5,5,6,4,5,5,i choose this because i thought it 
+34,2,4,5,5,5,6,5,6,5,5,3,4,5,6,6,its my thought
+34,3,3,5,5,6,6,6,5,6,4,7,6,5,5,5,its my thought
+34,4,1,3,4,4,4,4,4,3,4,2,3,5,5,4,my thought
+,,,,,,,,,,,,,,,,
+35,1,5,4,7,2,3,5,1,5,7,7,2,2,1,1,"""If the Clown (the only one he has a preference for) was at C then VG explanation"
+35,2,4,4,5,3,5,4,2,5,5,5,5,5,6,2,"""The placement halfway between B&C wouldn't be ideal (VG) regardless no matter the parameter; however"
+35,3,3,4,3,6,7,3,3,6,3,5,7,7,5,5,"""If the Clown was at B then 7. If other than the Clown was at A or C then 5. If none were known then 4. If anything other than the Clown at B then 5. The Clown being at A B or C means he'd see it at least peripherally ok at B so no 1s"
+35,4,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,
+,,,,,,,,,,,,,,,,
+36,1,1,3,2,3,3,4,7,5,3,2,2,5,3,7,"""accordingly my view point A start with Acrobats and C Start with Clown so"
+36,2,2,3,2,2,3,6,7,2,5,2,3,3,4,7,Clone should start with Stage C and Acrobat start with Stage A.
+36,3,3,6,6,2,2,6,2,4,4,5,5,4,5,3,Magician should start with Stage B and Clone should start with Stage C and Acrobat start with Stage A
+36,4,5,4,7,2,2,7,2,2,7,2,4,2,2,2,Acrobat start with Stage A and Clone start with Stage C and Magician start with stage B
+,,,,,,,,,,,,,,,,
+37,1,5,6,7,3,3,3,3,4,7,6,3,2,3,2,He choosed C and he likes clowns. 
+37,2,2,3,5,4,5,2,3,2,4,5,2,3,3,2,He has choosen between A and B and he likes clowns.
+37,3,3,4,2,6,7,2,3,2,3,2,2,5,5,2,He likes clowns and choosed B
+37,4,4,7,6,4,5,5,2,3,5,2,3,5,5,4,He is in between B and C. He doesn't know.
+,,,,,,,,,,,,,,,,
+38,1,5,3,7,1,5,3,1,1,6,6,3,3,3,3,"""The clown being on C makes the most sense"
+38,2,4,7,7,2,7,2,2,6,6,6,6,6,2,2,"""Since Alex is sitting between B and C he has an equally good view of both.  Any option that would place the clown on A makes no sense.  Not knowing where the actors are"
+38,3,3,7,4,3,7,2,3,3,2,2,7,7,3,2,David seems to be hedging his bets by picking the middle.  So not knowing where they would be or anything with the clown being on B would be highly likely.  Anything deliberately placing the clown on A or B are very unlikely.  Anything where the clown is placed at A or C by chance is unlikely
+38,4,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,
+,,,,,,,,,,,,,,,,
+39,1,5,1,2,3,6,2,2,3,7,6,4,5,2,3,Matt would sit in front of the clown. 
+39,2,2,1,5,2,5,5,1,2,5,5,6,5,4,2,Alex would most likely sit in an area close to the clown. 
+39,3,3,1,1,2,6,1,1,1,1,2,5,6,2,2,David would ideally select seats where the clown would be sitting. 
+39,4,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,
+,,,,,,,,,,,,,,,,
+40,1,1,6,6,5,7,7,5,7,6,7,7,7,6,4,good
+40,2,2,6,6,7,7,5,5,7,6,7,7,5,6,7,good
+40,3,3,6,7,6,6,6,6,6,5,7,6,7,7,7,ok
+40,4,4,5,7,7,5,7,6,7,6,6,5,6,7,6,good
+,,,,,,,,,,,,,,,,
+41,1,1,5,4,7,6,2,4,5,6,5,3,5,3,5,If jacob like clowns then he will position himself where he can see clowns the most. he believes that magician and acrobats are located in b and c
+41,2,2,4,6,5,5,3,3,5,4,5,6,4,4,5,david is not sure where the clowns will be so he positioned himself somewhere where he thinks he can view all or hopefully view clowns
+41,3,3,6,3,5,5,4,3,4,5,6,5,4,4,5,alex does not know where the best location is so he positioned himself somewhere in the middle
+41,4,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,
+,,,,,,,,,,,,,,,,
+42,1,1,4,5,5,6,5,5,6,7,6,5,5,6,6,I went with what make sense
+42,2,2,4,5,6,6,5,5,6,6,6,7,6,6,5,I try to be fair with my choices
+42,3,3,3,4,5,4,4,5,5,5,5,6,6,6,5,I went with my feelings
+42,4,4,5,4,6,7,5,3,5,4,6,3,5,5,5,I went with my feelings
+,,,,,,,,,,,,,,,,
+43,1,5,1,7,1,1,1,1,1,7,1,1,1,1,1,David would want to sit close to what he likes.
+43,2,4,1,7,1,7,1,1,1,7,7,1,1,1,1,"""Matt would want to be close to the clown"
+43,3,3,1,1,1,7,1,1,1,1,1,1,1,1,1,"""David would be closest to the clown"
+43,4,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,
+,,,,,,,,,,,,,,,,
+44,1,5,2,7,1,1,1,1,4,7,7,1,1,1,1,well if he likes the clown best and knew the stage c was for the clown then thats the best place to be
+44,2,4,1,6,1,5,4,1,2,4,4,1,2,1,1,He was close to where he should be
+44,3,3,1,1,3,1,1,1,1,1,1,7,6,1,1,He did the right thing
+44,4,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,
+,,,,,,,,,,,,,,,,
+45,1,1,7,7,6,6,6,2,2,7,6,4,5,6,6,Matt likkes clowns so some of his choices would be better than others
+45,2,4,7,6,2,6,4,2,2,7,6,6,7,2,2,Most of Davids choices are good if he likes the clown most. he will be seated in a semi-central location to be able to see all acts.
+45,3,3,7,5,5,7,6,5,5,4,5,7,7,5,6,If Jacob like the clown most then he is in the best location to be able to see the clown no matter which stage the clown is own. He will be in the most central location.
+45,4,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,
+,,,,,,,,,,,,,,,,
+46,1,5,2,7,7,4,2,1,4,7,6,4,4,2,1,It makes sense to sit right in front of stage c if he likes clowns and believes that the clown will perform on stage c. It makes sense to sit closest to the stage of the performer that he wants to see most. 
+46,2,4,5,6,2,6,3,1,1,7,7,7,7,2,2,It would make sense to sit in the seat that Matt chose if he believed the clown would perform on either b or c because that way he can see the clown perform and a little bit of the other performances too. 
+46,3,3,4,3,2,7,3,3,3,3,4,7,7,3,4,IF Alex likes to see the clowns and is indifferent to the other performers than he should sit in front of B if he believes the clown will perform on stage b. Then he can also see the other performers at the same time and get to see a little of everything.
+46,4,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,
+,,,,,,,,,,,,,,,,
+47,1,1,3,6,2,2,5,2,5,6,6,2,2,2,2,Alex likes clowns so he choose stage A. So Stage A should clowns show.
+47,2,4,6,4,4,4,2,2,5,4,4,4,4,2,2,Somewhat confusing.
+47,3,3,2,2,5,6,2,2,5,2,6,6,6,2,2,He believes clowns show is in stage B.
+47,4,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,
+,,,,,,,,,,,,,,,,
+48,1,5,4,7,1,1,3,1,3,7,7,1,1,1,1,Alex would want to sit as close to the Clown as possible.
+48,2,4,4,7,1,7,5,1,6,7,6,5,7,1,1,"""Matt would want to be as close to the Clown as possible but"
+48,3,3,4,1,5,7,1,1,5,1,1,7,7,1,1,"""Jacob would"
+48,4,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,
+,,,,,,,,,,,,,,,,
+49,1,1,5,4,5,6,5,4,6,6,4,5,5,4,4,its weird
+49,2,4,5,5,5,4,6,6,5,5,6,4,4,5,4,interesting puzzle
+49,3,3,3,4,3,4,5,5,4,5,5,5,6,6,4,not sure on this one.
+49,4,2,6,4,5,5,5,4,3,5,3,5,6,3,5,this here was difficult
+,,,,,,,,,,,,,,,,
+50,1,5,5,4,6,3,5,5,5,5,5,4,5,5,4,went with what was most logical
+50,2,4,6,5,6,5,5,4,6,5,5,4,5,5,4,went with what was most logical
+50,3,3,6,5,5,5,5,4,5,6,5,4,4,4,3,went with what was most logical
+50,4,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,
+,,,,,,,,,,,,,,,,
+51,1,1,7,7,1,2,4,1,1,7,7,1,1,1,1,"""He likes clowns"
+51,2,4,7,6,4,6,2,1,6,6,6,6,6,1,1,"""It's just as before.  If he likes clowns"
+51,3,3,7,1,6,7,1,1,5,1,1,7,7,2,1,"""I'm sorry that I'm not coming up with anything interesting to say"
+51,4,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,
+,,,,,,,,,,,,,,,,
+52,1,5,4,6,2,3,4,1,4,6,6,3,3,1,1,It would make sense that Matt would choose to sit closest to the clown stage. So it would not make sense that he would choose to sit the furthest away.
+52,2,4,4,5,4,5,4,2,4,5,5,5,5,2,2,"""Considering that Alex between stage B and C"
+52,3,3,4,2,4,7,3,2,4,2,2,6,6,2,2,"""Since Jacob likes clowns it would make sense that he would sit in front of the section where clowns would be performing"
+52,4,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,
+,,,,,,,,,,,,,,,,
+53,1,5,6,7,1,2,4,1,5,7,7,2,2,1,1,"""Alex wants to sit closest to the clowns because he likes them"
+53,2,4,6,5,3,5,3,1,3,5,5,6,6,1,1,"""David doesn't think that the clown will be at A"
+53,3,3,4,1,4,7,1,1,5,1,2,7,7,1,1,"""Jacob definitely thinks that his favorite"
+53,4,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,
+,,,,,,,,,,,,,,,,
+54,1,5,6,7,1,2,4,2,4,5,7,2,2,1,2,"""I think that Alex would try to see clowns"
+54,2,2,7,6,3,6,4,1,4,6,6,5,4,1,1,"""I think David was unaware of where the clowns would be"
+54,3,3,6,1,2,7,1,1,4,1,2,7,6,2,1,"""I think Jacob knew the clowns would be on B"
+54,4,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,
+,,,,,,,,,,,,,,,,
+55,1,1,4,7,1,2,4,1,2,7,2,2,2,2,2,i think he would choose the stage he thinks the clown is own
+55,2,4,2,6,6,5,2,1,2,6,6,3,2,1,4,I think he is trying to get close to the stage to clown is on
+55,3,3,4,5,5,3,2,4,4,3,3,5,2,5,4,he would want to be near the clown
+55,4,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,
+,,,,,,,,,,,,,,,,
+56,1,1,7,7,5,5,6,5,4,5,7,5,6,5,6,Jacob would not have sat in front of stage a if he believed the clowns were on stage a.
+56,2,2,6,6,7,7,5,3,6,4,6,5,5,3,6,He wants to be between stage a and b.
+56,3,3,5,6,7,4,4,7,6,3,3,4,3,2,3,"""I think he is trying to be distant from A"
+56,4,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,
+,,,,,,,,,,,,,,,,
+57,1,5,4,6,4,1,2,2,2,7,7,3,3,4,2,no
+57,2,4,6,6,2,6,5,2,4,6,6,6,6,2,2,no
+57,3,3,4,4,4,6,3,2,2,2,6,6,6,3,3,no
+57,4,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,
+,,,,,,,,,,,,,,,,
+58,1,5,1,7,6,2,3,4,3,5,3,5,2,4,2,He based his decision on the order of stage apperance
+58,2,2,4,3,3,5,5,6,6,3,4,2,4,2,5,Since he is indifferent he choose in between 
+58,3,3,2,3,3,5,5,5,5,5,4,4,5,3,3,She likes most performers and was indifferent on where to sit.
+58,4,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,

@@ -1,0 +1,198 @@
+
+body {
+    padding:0px;
+/*     padding: 70px 0px 0px; */
+    margin: 0px;
+    background-color: white;
+    color: black;
+    font-weight: 300; 
+    font-size: 11pt;
+}
+
+
+
+/* text styling */
+strong {
+  font-weight: 600;         
+}
+
+.warm {
+  color: steelblue;
+  text-align: justify;
+}
+
+.cool {
+  color: #ccccff;
+}
+
+
+/* these are all the same for now, but easy to modify individually */
+#container-ad, #container-error, #container-exp, #container-consent, #container-instructions, #container-questionnaire {
+    position: absolute;
+    top: 0px; /* Header Height */
+    bottom: 0px; /* Footer Height */
+    left: 0px;
+    right: 0px;
+    padding: 100px;
+    padding-top: 5%;
+    background: white;
+}
+
+#container-consent, #container-exp {  /* override padding to fit long consent forms and exp display*/
+  padding: 10px;
+  padding-left: 20px;
+  padding-right: 20px;
+  padding-top: 1%;
+  padding-bottom: 5%;
+}
+
+/* ad.html  - the ad that people view first */
+#adlogo {
+    float: right;
+	width: 110px;
+	padding: 20px 0 0 0;
+}
+
+/* consent.html - the consent form */
+#consent {
+  margin: 0 auto;
+  margin-top: 0;
+  width: 800px;
+  font-size: 100%;
+}
+
+.instructionsnav {
+    margin-bottom: 20px;
+}
+
+.legal {
+  font-size: 11pt;
+}
+
+#instructionHeader {
+    margin: 15px auto;
+    width: 800px;
+}
+
+#trialNumber {
+/*     width: 200px; */
+/*     font-size: 120%; */
+}
+ 
+#trialNumber p {
+    display: inline-block;
+}
+ 
+/* 
+#query {
+    font-weight: 500;
+    text-align: center;
+    padding-top: 55px;
+ }
+ */
+
+#responses {
+    padding: 310px 0px 0px;
+    font-size: 100%;
+    width: 70%;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+}
+
+.question {
+    text-align: center;
+    padding: 5px;
+    margin-bottom: 8px;
+    border-radius: 4px;
+}
+
+label:hover {
+    background:#ccc;   
+}
+
+.rating {
+    margin-top: 5px;
+    margin-bottom: 0px;
+    table-layout: fixed;
+    font-size: 85%;
+}
+
+.table tbody tr td {
+    vertical-align: bottom;
+}
+
+.rating label {
+    padding: 15px 25px;
+    border-radius: 5px;
+}
+ 
+#responseContainer {
+    margin: 0 auto;
+    text-align: center;
+}
+
+.responseScale {
+    text-align: center;
+    margin: 0 auto;
+}
+
+.itemLabelPair {
+/* 
+    display: inline-block;
+    text-align: center;
+ */
+}
+
+.radio-inline.responseLabel {
+    font-weight: normal;
+    border-radius:8px;   
+    padding: 10px 10px 10px 30px;
+}
+
+.radio-inline.responseLabel:hover {
+    background: #C2EBFF;
+}
+
+.responseLabel input {
+     margin-right: 10px;
+}
+
+
+/* errors */
+#error img {
+  padding-right: 10px;
+  padding-top: 15px;
+}
+
+#trialImage img {
+  display: block;
+  margin: auto;
+  height: 120px;
+}
+
+#notComplete {
+  text-align: center;
+  margin: 15px auto;
+  width: 70%;
+  display: none; /* default to none. turns on if user tries to continue without answering all questions (not on manipulation check) */
+}
+
+.tooltip {
+  opacity: 1;
+}
+.tooltip > .tooltip-inner {
+  opacity: 1 !important;
+  filter: alpha(opacity=100);
+  background-color: #d9edf7;
+  color: black;
+  border: 1px solid black;
+  border-radius: 4px;
+  padding: 15px;
+  font-size: 14px;
+  max-width: 500px;
+  width: 500px;
+}
+.tooltip.in {
+  opacity: 1 !important;
+}

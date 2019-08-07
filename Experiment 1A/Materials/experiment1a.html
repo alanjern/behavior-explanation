@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <title>Experiment</title>
+  
+<!--   <script type='text/javascript' src='//code.jquery.com/jquery-2.1.0.js'></script> -->
+  
+    <script type='text/javascript' src='jquery-min.js'></script>
+  
+  
+  
+<!-- 
+  <script type="text/javascript" src="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+ -->
+  
+  
+    <script type="text/javascript" src="bootstrap.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="bootstrap.min.css">
+   
+  <style type='text/css'>
+    label {
+    width: 100%;
+    height: 100%;
+    cursor:pointer;
+    align-content: center;
+    text-align: center;
+}
+body {
+    font-family: sans
+}
+
+#cols td {
+    padding-right: 75px;
+}
+
+.table {
+    width: 550px;
+    table-layout: fixed;
+    vertical-align: bottom;
+}
+
+.he {
+   width: 250px;
+   text-align: left;
+    vertical-align: top;
+}
+.he2 {
+   width: 700px;
+   text-align: left;
+}
+.bd {
+   width: 250px;
+   text-align: left;
+    vertical-align: top;
+
+}
+ .bd2 {
+   width: 700px;
+   text-align: left;
+}
+
+.table tbody tr td {
+    vertical-align: bottom;
+}
+
+.exp {
+    font-size: 12pt;
+}
+td {
+    text-align: center;
+}
+b {
+    font-weight: bold;
+} 
+table {
+    font-size: 10pt;
+}
+
+label:hover {
+    background:#ccc;   
+}
+  </style>
+  
+
+
+<script type='text/javascript'>//<![CDATA[ 
+$(window).ready(function(){
+
+var swapExps = function(exps){
+   for(var i = 0; i < exps.length; i++){
+      exps[i] = exps[i].replace(/A/g, 'Z');
+      exps[i] = exps[i].replace(/C/g, 'A');
+      exps[i] = exps[i].replace(/Z/g, 'C');
+   }
+}
+
+var data;
+var flip = false;
+var instructions;
+var explanations = ['<b>near A</b>', '<b>far from C</b>', '<b>near A</b>, and <b>far from C</b>', '<b>near A</b>, and <b>far from B and C</b>', '<b>near A</b>, and <b>far from B</b>', '<b>far from B</b>', '<b>far from B and C</b>', '<b>far from A</b>', '<b>near B</b>, and <b>far from C</b>', '<b>near A and B</b>, but <b>far from C</b>', '<b>near A and B</b>', '<b>near B</b>', '<b>far from A and C</b>'];
+explanations = shuffle(explanations);
+
+var names = ['Jacob', 'David', 'Luke', 'Alex', 'Matt', 'Jack'];
+names = shuffle(names);
+
+instructions = '<h2>Instructions</h2><p>Alice (A), Bob (B) and Cathy (C) are attending a meeting and sat in the seats marked below. '+names[0]+' (X) showed up to the meeting next. In this meeting, there are some people '+names[0]+' likes, some he dislikes and some he is indifferent toward.</p><img src="case_x1.png">';
+
+$('#instr').html(instructions);
+
+
+//console.log(explanations.length);
+var cases = [0];
+
+
+var index = 0;
+var time = 0;
+
+$('#intro').hide();
+$('#toIntro').click(function(){
+    if(!$('#consent').prop( "checked" )){
+       $('#irb').css({'background': '#FFE0E0'});
+    } else {
+        //$('#intro').show();
+        time = Date.now();
+        $('#conirb').hide();
+        nextCase();
+    }
+});
+
+$('#toCase').click(function(){
+    $('#intro').hide();
+    nextCase();
+});
+
+function getHIT() {
+    var text = "";
+    var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+    for( var i=0; i < 15; i++ )
+        text += possible.charAt(Math.floor(Math.random() * possible.length));
+
+    return text;
+}
+
+
+var response = {r1:[],r2:[]};
+var hit = '';
+
+function nextCase(){
+    if(index == cases.length+1){
+        hit = getHIT();
+        time = Date.now() - time;
+        time /= 1000;
+        time = Math.floor(time/60) + ':' + (time % 60);
+        $.get('/___exp/expF?expInd=9&explanations='+JSON.stringify(explanations)+'&cases='+JSON.stringify(cases)+'&names='+JSON.stringify(names)+'&response1='+JSON.stringify(response.r1)+'&response2='+JSON.stringify(response.r2)+'&hit='+hit+'&time='+time);
+        $('#case').html('<h4>Thank you for participating</h4><p>Please return to Amazon Mechanical Turk and submit the following code in order to receive payment for this HIT: '+hit+' </p>');
+        return;
+    }
+    var cas = '<h3>Case '+(index+1)+' of '+(cases.length+1)+':</h3>';
+
+
+    var table = ''
+    var rating = '<h3>'+names[0]+' sat in the seat marked above. Rate how satisfying the following explanations are for why '+names[0]+' chose to sit there.</h3><table id="cols">';
+    var name;
+if(index < cases.length){
+    name = '';
+    } else {
+name = '<h4>This case is only meant to check if you are reading the instructions carefully. Please ignore the information and leave all the questions blank.</h4>';
+}
+    for(var j = 0; j < explanations.length; j++){
+        var exp = '<td><div id="explan'+j+'"><p class="exp">'+names[0]+' wanted to sit '+explanations[j]+'</p>';
+       if(j % 2 == 0){
+           exp = '<tr>'+exp;
+       }
+        var t = '<form><table class="table table"><tr><td>Very Bad Explanation</br>1</td><td>2</td><td>3</td><td>4</td><td>5</td><td>6</td><td>Very Good Explanation</br>7</td></tr><tr>';
+        for(var i = 1; i < 8; i++){
+            t += '<td><label style="display:block; padding:5px 25px 10px 10px;"><input type="radio" name="rating'+j+'" value="'+i+'"></input></label></td>';
+        }
+        t += '</tr></table></form>';
+        rating += exp+t+'</div></td>';
+        if(j % 2 == 1){rating += '</tr>'}
+    }
+    rating += '</table>';
+    
+    var text = '<p>Please explain your judgments.</p><textarea class="form-control" rows="5" id="resp"></textarea>';
+    
+    var button = '<button type="button" class="btn btn-primary" id="nextCase" style="float: right; margin-top:10px; margin-bottom: 50px;">Next</button>';
+    $('#case').html(cas+instructions+name+table+rating+text+button);
+    index += 1;
+    
+    $('#nextCase').click(function(){
+        var valid = true;
+        for(var i = 0; i < explanations.length; i++){
+            var val = $('input:radio[name=rating'+i+']:checked').val();
+            if(val === undefined){
+                valid = false;
+                $('#explan'+i).css({'background': '#FFE0E0'});
+            } else {
+                $('#explan'+i).css({'background': '#fff'});
+            }
+        }
+        if($('#resp').val().length < 1){
+           valid = false;
+           $('#resp').css({'background': '#FFE0E0'});
+        } else {
+           $('#resp').css({'background': '#fff'});
+        }
+        if(valid || index == 2){
+            var t = index-1;
+            response['r'+index] = [];
+            for(i = 0; i < explanations.length; i++){
+                response['r'+index].push($('input:radio[name=rating'+i+']:checked').val());
+            }
+            response['r'+index].push($('#resp').val());
+            nextCase();
+            $("html, body").animate({ scrollTop: 0 }, "fast");
+        }
+    });
+}
+
+
+
+function shuffle(array) {
+  var currentIndex = array.length, temporaryValue, randomIndex ;
+  while (0 !== currentIndex) {
+    randomIndex = Math.floor(Math.random() * currentIndex);
+    currentIndex -= 1;
+    temporaryValue = array[currentIndex];
+    array[currentIndex] = array[randomIndex];
+    array[randomIndex] = temporaryValue;
+  }
+  return array;
+}
+});//]]>  
+
+</script>
+
+
+</head>
+<body>
+  <div class="container-fluid" id="conirb" style="margin: 10px; width:75%">  <div id='irb'><p> You are being invited to participate in a research study about human reasoning. This study is being conducted by Alan Jern, Ph.D., from the Department of Humanities and Social Sciences at Rose-Hulman Institute of Technology. There are no known risks or costs if you decide to participate in this research study. In this study, you will be asked to answer a few questions or make some judgments. There are no right or wrong answers. We are only interested in whether people tend to give similar answers. The information collected may not benefit you directly, but the information learned in this study could help us to better understand how people think and reason. Your responses will be held confidential and the data will be stored in a way that will not link your responses to your identity in any way. Your participation in this study is voluntary. By completing the survey, you are voluntarily agreeing to participate. If you have any questions about the study, please contact Alan Jern at jern@rose-hulman.edu. If you have any questions about your rights as a research subject or if you feel you’ve been placed at risk, you may contact the Institutional Reviewer, Daniel Morris, by phone at (812) 877-8314, or by e-mail at morris@rose-hulman.edu.</p>
+        <input type="checkbox" name="consent" id='consent' value="consent">I consent to the terms of the experiment</input></div>
+<button type="button" class="btn btn-primary" id="toIntro" style="float: right">Next</button>
+</div>
+
+<div class="container-fluid" id="intro"><p id="instr"></p>
+    
+
+<button type="button" class="btn btn-primary" id="toCase" style="float: right">Next</button>
+</div>
+
+<div id="case" class="container-fluid" style="padding-top: 5px">
+    
+</div>
+  
+</body>
+
+
+</html>
+
+
