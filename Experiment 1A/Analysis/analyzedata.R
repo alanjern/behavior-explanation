@@ -2,6 +2,7 @@
 
 library(tidyverse)
 library(ggrepel)
+library(effsize)
 
 # Clear workspace
 rm(list=ls())
@@ -38,12 +39,16 @@ print(summary(aov(rating ~ factor(condition) * factor(explanation) + Error(subje
 r1 <- ratingsTidy %>% filter(explanation == "Near A", condition == 1)
 r2 <- ratingsTidy %>% filter(explanation == "Near A, Far B, Far C", condition == 1)
 print(t.test(r1$rating,r2$rating,paired=TRUE,alternative = "greater"))
+# Calculate effect size
+print(cohen.d(r1$rating,r2$rating,paired=TRUE))
 
 # Prediction 3: In Condition 3, test whether "Near B" is significantly greater than
 # "far from A and C"
 r3 <- ratingsTidy %>% filter(explanation == "Near B", condition == 3)
 r4 <- ratingsTidy %>% filter(explanation == "Far A, Far C", condition == 3)
 print(t.test(r3$rating,r4$rating,paired=TRUE,alternative = "greater"))
+# Calculate effect size
+print(cohen.d(r3$rating,r4$rating,paired=TRUE))
 
 
 # Reorder the factors as they will appear in the figures
