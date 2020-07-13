@@ -3,6 +3,9 @@ Experiment 1A model code
 
 Code tested and run in Python 3.
 
-TODO: Maybe explain what the main variables are at the end of the file and what the main files are. Need to explain that these are not the model predictions in the figures. Some post-processing happens that is explained in the text and happens in the R analysis script
+* `model.py`: Generates predictions for all models except the non-probabilistic model. 
+* `nonprob_model.py`: Generates predictions for the non-probabilistic model.
+
+Note that these predictions are not the final predictions that appear in the paper. Some post-processing is done by `analyzedata.R` to obtain the best-fitting model parameters first.
 
 This code was originally written by [AJ Piergiovanni](https://github.com/piergiaj) and edited by [Alan Jern](https://github.com/alanjern).

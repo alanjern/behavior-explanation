@@ -75,6 +75,7 @@
 #
 
 library(tidyverse)
+library(brms)
 
 # Clear workspace
 rm(list=ls())
@@ -109,17 +110,102 @@ processedData_long <- gather(processedData, key = expl,
                              value = rating, Explanation.0, Explanation.1,
 							 Explanation.2, Explanation.3, Explanation.4,
 							 Explanation.5, Explanation.6, Explanation.7)
+pd <- processedData_long %>% filter(expl != "Explanation.7")
+
+
+# Create a data frame that groups the explanations into three categories: Explanations 0-2,
+# Explanations 3-5, and Explanation 6
+#
+# The reasoning here is that these are explanations with the same number of factors in them
+
+# First create separate data frames for the ratings for each explanation
+# and apppend a new column that indicates the numbers of factors in that explantion
+ex0 <- filter(pd, expl=="Explanation.0") %>% select(-expl) %>% mutate(explFactors = "one")
+ex1 <- filter(pd, expl=="Explanation.1") %>% select(-expl) %>% mutate(explFactors = "one")
+ex2 <- filter(pd, expl=="Explanation.2") %>% select(-expl) %>% mutate(explFactors = "one")
+ex3 <- filter(pd, expl=="Explanation.3") %>% select(-expl) %>% mutate(explFactors = "two")
+ex4 <- filter(pd, expl=="Explanation.4") %>% select(-expl) %>% mutate(explFactors = "two")
+ex5 <- filter(pd, expl=="Explanation.5") %>% select(-expl) %>% mutate(explFactors = "two")
+ex6 <- filter(pd, expl=="Explanation.6") %>% select(-expl) %>% mutate(explFactors = "three")
+
+# Now glue them all back together
+grpdData <- ex0 %>% bind_rows(ex1) %>% bind_rows(ex2) %>% bind_rows(ex3) %>% 
+              bind_rows(ex4) %>% bind_rows(ex5) %>% bind_rows(ex6)
+grpdData$explFactors <- as.factor(grpdData$explFactors)
+grpdData$explFactors <- relevel(grpdData$explFactors, "three")
+
+# Separate based on know and didn't know
+grpdDataKnow <- grpdData %>% filter(Case == "didn't eat" | Case == "arrested" | Case == "got keys")
+grpdDataDidntKnow <- grpdData %>% filter(Case == "ate" | Case == "didn't arrest" | Case == "didn't get keys")
+
+# Run the Bayesian models to test if there is an effect of number of explanation factors           
+m_know <- brm(rating ~ explFactors + (1|Subject), family="cumulative", data=grpdDataKnow, iter=5000)
+m_didntKnow <- brm(rating ~ explFactors + (1|Subject), family="cumulative", data=grpdDataDidntKnow, iter=5000)
+
+# Run the post-hoc tests
+
+cat(sprintf("\n=========================\n"))
+cat(sprintf("Know condition comparison tests\n"))
+h1 <- hypothesis(m_know, "explFactorstwo > 0")
+cat(sprintf("\n=========================\n"))
+cat(sprintf("Test that two-factor explanations is > three-factor\n"))
+print(h1)
+h2 <- hypothesis(m_know, "explFactorsone > explFactorstwo")
+cat(sprintf("\n=========================\n"))
+cat(sprintf("Test that one-factor explanations is > two-factor\n"))
+print(h2)
+
+cat(sprintf("\n=========================\n"))
+cat(sprintf("Didn't know condition comparison tests\n"))
+h1 <- hypothesis(m_didntKnow, "explFactorstwo > 0")
+cat(sprintf("\n=========================\n"))
+cat(sprintf("Test that two-factor explanations is > three-factor\n"))
+print(h1)
+h2 <- hypothesis(m_didntKnow, "explFactorsone > explFactorstwo")
+cat(sprintf("\n=========================\n"))
+cat(sprintf("Test that one-factor explanations is > two-factor\n"))
+print(h2)
+
+
+
+# Test if ratings varied by case
+# I tried running the model on all the data at once but the model wouldn't converge, so I'm
+# splitting the data set into chunks (by story) and running three separate models
+gd_food <- grpdData %>% filter(Story == "food allergy")
+m_food <- brm(rating ~ Case + (1|Subject), family="cumulative", data=gd_food, iter=6000, control = list(adapt_delta=0.9))
+h_food <- hypothesis(m_food, "Casedidnteat > 0", alpha = 0.05)
+
+cat(sprintf("\n=========================\n"))
+cat(sprintf("Test that didn't eat is diff from did eat\n"))
+print(h_food)
+
+gd_robbery <- grpdData %>% filter(Story == "robbery")
+m_robbery <- brm(rating ~ Case + (1|Subject), family="cumulative", data=gd_robbery, iter=6000, control = list(adapt_delta=0.9))
+h_robbery <- hypothesis(m_robbery, "Casedidntarrest > 0", alpha = 0.05)
+
+cat(sprintf("\n=========================\n"))
+cat(sprintf("Test that didn't arrest is diff from did arrest\n"))
+print(h_robbery)
+
+gd_locks <- grpdData %>% filter(Story == "locks")
+m_locks <- brm(rating ~ Case + (1|Subject), family="cumulative", data=gd_locks, iter=6000, control = list(adapt_delta=0.9))
+h_locks <- hypothesis(m_locks, "Casegotkeys > 0", alhpa = 0.05)
+
+cat(sprintf("\n=========================\n"))
+cat(sprintf("Test that got keys is diff from didn't get keys\n"))
+print(h_locks)
+
 
 # Compute the ANOVA
 # -------------------
 # The prediction is an interaction between the Case and expl variables. Specifically,
 # we predict that subjects will treat the two cases of each story differently.
-pd <- processedData_long %>% filter(expl != "Explanation.7")
+
 print((summary(aov(rating ~ Case * Story * expl + Error(Subject/(Story*expl)), data=pd))))
 
 # Compute separate ANOVA tests for individual conditions
 # --------------------
-# The predicition is that within each condition, subjects will given different ratings 
+# The prediction is that within each condition, subjects will give different ratings 
 # for the different explanations
 
 # Food allergy
@@ -129,11 +215,14 @@ dfood2 <- processedData_long %>%
             filter(Story == "food allergy", Case=="didn't eat", expl != "Explanation.7")
 print(summary(aov(rating ~ expl + Error(Subject/expl), data=dfood2)))
 
+
+
 cat(sprintf("\n=========================\n"))
 cat(sprintf("Food allergy (ate) ANOVA:\n"))
 dfood1 <- processedData_long %>% 
             filter(Story == "food allergy", Case=="ate", expl != "Explanation.7")
 print(summary(aov(rating ~ expl + Error(Subject/expl), data=dfood1)))
+
 
 # Robbery
 cat(sprintf("\n=========================\n"))
@@ -141,6 +230,7 @@ cat(sprintf("Robbery (arrested) ANOVA:\n"))
 drobbery1 <- processedData_long %>% 
             filter(Story == "robbery", Case=="arrested", expl != "Explanation.7")
 print(summary(aov(rating ~ expl + Error(Subject/expl), data=drobbery1)))
+
 
 cat(sprintf("\n=========================\n"))
 cat(sprintf("Robbery (didn't arrest) ANOVA:\n"))
@@ -222,7 +312,7 @@ print(ggplot(predictions,
              ylab("Probability") +
              theme(text=element_text(size=9)) +
              ggtitle("Model predictions"))
-ggsave("expt2b_predictions.pdf", width=1.5, height=1.4, units="in")
+ggsave("expt4_predictions.pdf", width=1.5, height=1.4, units="in")
 
 
 # Plot data

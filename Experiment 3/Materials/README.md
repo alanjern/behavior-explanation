@@ -1,4 +1,4 @@
-Experiment 2A materials
+Experiment 3 materials
 =======================
 
 This experiment runs on the [psiturk](https://psiturk.org/) platform. To run this experiment on your own, you will need to edit the `config.txt` file within each directory for your system and account. Specifically, you will need to change the `contact_email_on_error` and `database_url` parameters. See the psiturk website for additional details for running a psiturk experiment.
