@@ -142,7 +142,7 @@ print(ggplot(data=proportions,
              theme(axis.title.y = element_text(angle=90, vjust=0.5), legend.position="bottom",
                    text=element_text(size=9)) +
              scale_color_manual(values=c("#1b9e77", "#d95f02", "#7570b3")))
-ggsave("expt1bresults_fullmodel.pdf", width=2.75, height=4, units="in")
+ggsave("expt2results_fullmodel.pdf", width=2.75, height=4, units="in")
              
              
 # Repeat for non-probabilistic model
@@ -211,5 +211,5 @@ print(ggplot(data=proportions,
              theme(axis.title.y = element_text(angle=90, vjust=0.5), legend.position="bottom",
                    text=element_text(size=9)) +
              scale_color_manual(values=c("#1b9e77", "#d95f02", "#7570b3")))
-ggsave("expt1bresults_nonprobmodel.pdf", width=2.75, height=4, units="in")
+ggsave("expt2results_nonprobmodel.pdf", width=2.75, height=4, units="in")
 

@@ -1,4 +1,4 @@
-Experiment 2A data
+Experiment 3 data
 ==================
 
 # The files

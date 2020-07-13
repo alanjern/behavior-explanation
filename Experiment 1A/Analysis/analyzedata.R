@@ -3,6 +3,7 @@
 library(tidyverse)
 library(ggrepel)
 library(effsize)
+library(brms)
 
 # Clear workspace
 rm(list=ls())
@@ -19,17 +20,57 @@ ratings <- read_csv('../Data/rawdata.csv')
 # Reshape data into tidy format
 ratingsTidy <- ratings %>% gather(explanation, rating, 3:15)
 
+
+ratingsTidyDF <- as.data.frame(ratingsTidy)
+ratingsTidyDF$condition <- as.factor(ratingsTidyDF$condition)
+ratingsTidyDF$explanation <- as.factor(ratingsTidy$explanation)
+ratingsTidyDF$condition <- relevel(ratingsTidyDF$condition, 2) # set condition 2 to reference level (useful for post-hoc tests)
+
+# Run the model
+# Explanation:
+#   - condition * explanation makes sure that it also includes coefficients for every interaction
+#     of coefficient x explanation (that is, it will allow me to perform comparisons of individiual conditions)
+#   - (1|subject) is because subject is a random effect (i.e. it is not a fixed effect that would remain 
+#     the same if the experiment were run again
+#   - family=cumulative runs ordinal regression
+#   - set iterations to a high number because recommendation is that each coefficient should have an effective
+#     gibbs sample estimate > 1000 and lower iteration numbers resulted in not enough eff. samples
+m <- brm(formula = rating ~ condition * explanation + (1|subject), data=ratingsTidyDF, family=cumulative, iter=5000)
+summary(m)
+
+# Perform the hypothesis tests
+# Note: Unlike in a t-test, we are not comparing means here, but the learned coefficients in the 
+#       regression model from above. So what we are looking for here is the posterior probability
+#       assigned to the H1 that the difference in coefficient values for the interactions for the
+#       two conditions of interest is sufficiently greater than H0 that the difference is 0.   
+# (These predictions are based on exploratory analysis of the data)
+# ------------------------
+
+# Note that for these tests, I am comparing interaction coefficients, not means
+
+# Prediction 2: In Condition 1, test whether "Near A" is significantly greater than
+# "Near A, far B, far C"
+h2 <- hypothesis(m, "condition1:explanationNearA > condition1:explanationNearAFarBFarC")
+print('Testing whether Cond 1: Near A is diff from Cond 1: Near A, Far B, Far C')
+print(h2)
+
+
+# Prediction 3: In Condition 3, test whether "Near B" is significantly greater than
+# "far from A and C"
+h3 <- hypothesis(m, "condition3:explanationNearB > condition3:explanationFarAFarC")
+print('Testing whether Cond 3: Near B is diff from Cond 3: Far A, Far C')
+print(h3)
+
+
+# -----------------------------
+# Run the pre-registered analysis
+#
 # Compute the ANOVA
 # ------------------
 # Prediction 1: A condition x explanation interaction such that subjects overall will
 # rate the explanations differently across conditions. For example, "Near A" will get
 # a higher rating when the person sat near A than when the person sat near B.
 print(summary(aov(rating ~ factor(condition) * factor(explanation) + Error(subject/(factor(condition)*factor(explanation))), data=ratingsTidy)))
-
-# For this appraoch see this tutorial (http://www.bodowinter.com/tutorial/bw_LME_tutorial.pdf) p 14
-# e1a.model <- lmer(rating ~ condition * explanation + (1|subject), data=ratingsTidy, REML=FALSE)
-# e1a.null <- lmer(rating ~ condition + explanation + (1|subject), data=ratingsTidy, REML=FALSE)
-# anova(e1a.null,e1a.model)
 
 # Compute some post-hoc t-tests
 # (These predictions are based on exploratory analysis of the data)
@@ -281,6 +322,25 @@ bestpredictions <- bestpredictions_fullmodel %>%
                    left_join(bestpredictions_utility, by=c("condition","explanation")) %>%
                    select(condition, explanation, fullmodel, rationalsupport, simplicity, utility)
 write_csv(bestpredictions, 'bestfitting_modelpredictions.csv')
+
+
+# Run additional model to test for effects of simplicity and rational support on ratings
+rt <- ratingsTidy
+rt$explanation <- as.factor(rt$explanation)
+rt$condition <- as.factor(rt$condition)
+bp <- bestpredictions
+bp$explanation <- as.factor(bp$explanation)
+bp$condition <- as.factor(bp$condition)
+ratingsAndScores <- rt %>% left_join(bp, by=c("condition","explanation"))
+
+m2 <- brm(formula = rating ~ rationalsupport * simplicity + (1|subject), data=ratingsAndScores, family=cumulative, iter=5000)
+summary(m2)
+
+h4 <- hypothesis(m2, "rationalsupport > 0")
+print(h4)
+
+h5 <- hypothesis(m2, "simplicity > 0")
+print(h5)
 
 # Create plots
 

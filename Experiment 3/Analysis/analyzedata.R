@@ -1,6 +1,7 @@
 # Analyze data
 
 library(tidyverse)
+library(brms)
 
 # Clear workspace
 rm(list=ls())
@@ -69,6 +70,7 @@ excludedSubjects_dislikesClowns <- dislikesClownsData %>%
 								   filter(Rating != -1) %>%
 								   select(Subject) %>% 
 								   rapply(function(x) unique(x))
+
 # Exclude subjects
 likesClownsData <- likesClownsData %>% filter(!(Subject %in% excludedSubjects_likesClowns))
 dislikesClownsData <- dislikesClownsData %>% filter(!(Subject %in% excludedSubjects_dislikesClowns))
@@ -98,41 +100,41 @@ dislikesClownsPredictions_nonprob <- read.csv("../Model/predictions/dislikesClow
 likesClowns_means <- likesClownsData %>% filter(Condition != 4) %>%
 										 group_by(Condition) %>%
 										 summarise(
-										  Mean.Exp00 = mean(Explanation.00),
-										  Mean.Exp01 = mean(Explanation.01),
-										  Mean.Exp02 = mean(Explanation.02),
-										  Mean.Exp03 = mean(Explanation.03),
-										  Mean.Exp04 = mean(Explanation.04),
-										  Mean.Exp05 = mean(Explanation.05),
-										  Mean.Exp06 = mean(Explanation.06),
-										  Mean.Exp07 = mean(Explanation.07),
-										  Mean.Exp08 = mean(Explanation.08),
-										  Mean.Exp09 = mean(Explanation.09),
-										  Mean.Exp10 = mean(Explanation.10),
-										  Mean.Exp11 = mean(Explanation.11),
-										  Mean.Exp12 = mean(Explanation.12)
+										  Explanation.00 = mean(Explanation.00),
+										  Explanation.01 = mean(Explanation.01),
+										  Explanation.02 = mean(Explanation.02),
+										  Explanation.03 = mean(Explanation.03),
+										  Explanation.04 = mean(Explanation.04),
+										  Explanation.05 = mean(Explanation.05),
+										  Explanation.06 = mean(Explanation.06),
+										  Explanation.07 = mean(Explanation.07),
+										  Explanation.08 = mean(Explanation.08),
+										  Explanation.09 = mean(Explanation.09),
+										  Explanation.10 = mean(Explanation.10),
+										  Explanation.11 = mean(Explanation.11),
+										  Explanation.12 = mean(Explanation.12)
 										 ) %>%
-										 gather(Explanation, Mean.Rating, Mean.Exp00:Mean.Exp12) %>%
+										 gather(Explanation, Mean.Rating, Explanation.00:Explanation.12) %>%
 										 arrange(Condition, Explanation)
 
 dislikesClowns_means <- dislikesClownsData %>% filter(Condition != 4) %>%
 										 group_by(Condition) %>%
 										 summarise(
-										  Mean.Exp00 = mean(Explanation.00),
-										  Mean.Exp01 = mean(Explanation.01),
-										  Mean.Exp02 = mean(Explanation.02),
-										  Mean.Exp03 = mean(Explanation.03),
-										  Mean.Exp04 = mean(Explanation.04),
-										  Mean.Exp05 = mean(Explanation.05),
-										  Mean.Exp06 = mean(Explanation.06),
-										  Mean.Exp07 = mean(Explanation.07),
-										  Mean.Exp08 = mean(Explanation.08),
-										  Mean.Exp09 = mean(Explanation.09),
-										  Mean.Exp10 = mean(Explanation.10),
-										  Mean.Exp11 = mean(Explanation.11),
-										  Mean.Exp12 = mean(Explanation.12)
+										  Explanation.00 = mean(Explanation.00),
+										  Explanation.01 = mean(Explanation.01),
+										  Explanation.02 = mean(Explanation.02),
+										  Explanation.03 = mean(Explanation.03),
+										  Explanation.04 = mean(Explanation.04),
+										  Explanation.05 = mean(Explanation.05),
+										  Explanation.06 = mean(Explanation.06),
+										  Explanation.07 = mean(Explanation.07),
+										  Explanation.08 = mean(Explanation.08),
+										  Explanation.09 = mean(Explanation.09),
+										  Explanation.10 = mean(Explanation.10),
+										  Explanation.11 = mean(Explanation.11),
+										  Explanation.12 = mean(Explanation.12)
 										 ) %>%
-										 gather(Explanation, Mean.Rating, Mean.Exp00:Mean.Exp12) %>%
+										 gather(Explanation, Mean.Rating, Explanation.00:Explanation.12) %>%
 										 arrange(Condition, Explanation)
 
 
@@ -295,5 +297,124 @@ print(ggplot(data=dislikesClowns_means,
 ggsave("nonprobmodel_dislikesclowns.pdf", width=2.8, height=1.8, units="in")
 
 
+# Combine the data into a single data frame
 
+# First increment subject numbers of dislikes clowns data by max subject number from likes condition
+likesClownsMaxSubject <- max(likesClownsData$Subject)
+dislikesClownsData$Subject <- dislikesClownsData$Subject + likesClownsMaxSubject
+
+# Add a new column to each data fram indicating the condition
+likesClownsData <- likesClownsData %>% mutate(clownsPref = "likes")
+dislikesClownsData <- dislikesClownsData %>% mutate(clownsPref = "dislikes")
+
+# Merge the two data frames
+clownDataFull <- likesClownsData %>% full_join(dislikesClownsData)
+
+# Turn into tidy format and ignore Condition 4
+clownDataTidy <- clownDataFull %>% gather(Explanation, Rating, 3:15) %>% 
+                                   filter(Condition != 4)
+
+
+# Convert to data frame
+clownDataDF <- as.data.frame(clownDataTidy)
+clownDataDF$Condition <- as.factor(clownDataDF$Condition)
+clownDataDF$Explanation <- as.factor(clownDataDF$Explanation)
+clownDataDF$clownsPref <- as.factor(clownDataDF$clownsPref)
+
+# Run the pre-registered ANOVA analysis
+print(summary(aov(Rating ~ Condition * Explanation + Error(Subject/Explanation), data=clownDataDF)))
+
+
+# Run the Bayesian logistic regression model
+
+m <- brm(formula = Rating ~ clownsPref * Condition * Explanation + (1|Subject), data=clownDataDF, family=cumulative, iter=5000)
+summary(m)
+
+# Test for a main effect of clown preference
+# I do this by running the model without including clown preference as an effect
+m_reduced <- brm(formula = Rating ~ Condition * Explanation + (1|Subject), data=clownDataDF, family=cumulative, iter=5000)
+# We can then compare the two model fits using leave-one-out (LOO) IC
+# This should show that model m (which includes clown preference) has a better model fit (lower LOOIC)
+# than model m2
+loo(m,m_reduced)
+
+# Test for interaction
+
+# Re-level with condition 2 as reference level and run model again in order to 
+# do some of the tests
+clownDataDF$Condition <- relevel(clownDataDF$Condition, 2)
+m2 <- brm(formula = Rating ~ clownsPref * Condition * Explanation + (1|Subject), data=clownDataDF, family=cumulative, iter=5000)
+summary(m2)
+
+# Re-level with likes as reference level and run model again in order to do some of
+# the tests
+clownDataDF$clownsPref <- relevel(clownDataDF$clownsPref, "likes")
+m3 <- brm(formula = Rating ~ clownsPref * Condition * Explanation + (1|Subject), data=clownDataDF, family=cumulative, iter=5000)
+summary(m3)
+
+# We will also run a few specific tests for interactions
+
+# Tests 1-2. Test for effect of liking/disliking
+
+# Check whether there was a significant effect on ratings in Condition 1
+# for Explanation 1 (believed clown at stage A) when the person liked clowns relative to
+# when the person disliked clowns
+h1 <- hypothesis(m2, "clownsPreflikes:Condition1:ExplanationExplanation.01 > 0")
+print(h1)
+
+# Check whether there was a significant effect on ratings in Condition 3
+# for Explanation 5 (believed clown at stage B) when the person liked clowns relative to
+# when the person disliked clowns
+h2 <- hypothesis(m, "clownsPreflikes:Condition3:ExplanationExplanation.03 > 0")
+print(h2)
+
+# Tests 3-8. Test for effects of simplicity
+
+# Check if, in Condition 1, "Clown at A" has a bigger coefficient (better explanation) than
+# "Clown at A, Magician at B, and Acrobat at C." when person likes clowns
+h3 <- hypothesis(m2, "clownsPreflikes:Condition1:ExplanationExplanation.01 > clownsPreflikes:Condition1:ExplanationExplanation.07")
+print(h3)
+
+# Check if, in Condition 1, "Clown at A" has a bigger coefficient (better explanation) than
+# "Clown at A, Acrobat at B, and Magician at C." when person likes clowns
+h4 <- hypothesis(m2, "clownsPreflikes:Condition1:ExplanationExplanation.01 > clownsPreflikes:Condition1:ExplanationExplanation.08")
+print(h4)
+
+# Check if, in Condition 1, "Clown at C" has a bigger coefficient (better explanation) than
+# "Magician at A, Acrobat at B, and Clown at C." when person disliked clowns
+h5 <- hypothesis(m3, "clownsPrefdislikes:Condition1:ExplanationExplanation.05 > clownsPrefdislikes:Condition1:ExplanationExplanation.11")
+print(h5)
+
+# Check if, in Condition 1, "Clown at C" has a bigger coefficient (better explanation) than
+# "Acrobat at A, Magician at B, and Clown at C." when person disliked clowns
+h6 <- hypothesis(m3, "clownsPrefdislikes:Condition1:ExplanationExplanation.05 > clownsPrefdislikes:Condition1:ExplanationExplanation.12")
+print(h6)
+
+# Check if, in Condition 3, "Clown at B" has a bigger coefficient (better explanation) than
+# "Magician at A, Clown at B, and Acrobat at C".
+h7 <- hypothesis(m, "clownsPreflikes:Condition3:ExplanationExplanation.03 > clownsPreflikes:Condition3:ExplanationExplanation.09")
+print(h7)
+
+# Check if, in Condition 3, "Clown at B" has a bigger coefficient (better explanation) than
+# "Acrobat at A, Clown at B, and Magician at C".
+h8 <- hypothesis(m, "clownsPreflikes:Condition3:ExplanationExplanation.03 > clownsPreflikes:Condition3:ExplanationExplanation.10")
+print(h8)
+
+
+# Combine the data frames with predictions into a single data frame
+allPredictions <- likesClowns_means %>% mutate(clownsPref = "likes") %>%
+                  bind_rows(dislikesClowns_means %>% mutate(clownsPref = "dislikes"))
+allPredictions$Condition <- as.factor(allPredictions$Condition)
+clownDataTidy$Condition <- as.factor(clownDataTidy$Condition)
+# Combine again with data
+ratingsAndScores <- clownDataTidy %>% left_join(allPredictions, by=c("Condition", "Explanation", "clownsPref")) 
+
+# Run model to test for effects of rational support and simplicity
+m4 <- brm(formula = Rating ~ rationalsupport * simplicity + (1|Subject), data=ratingsAndScores, family=cumulative, iter=5000)
+summary(m4)
+
+h9 <- hypothesis(m4, "rationalsupport > 0")
+print(h9)
+h10 <- hypothesis(m4, "simplicity > 0")
+print(h10)
 
