@@ -2,6 +2,7 @@
 
 library(tidyverse)
 library(brms)
+library(caret)
 
 # Clear workspace
 rm(list=ls())
@@ -9,32 +10,49 @@ rm(list=ls())
 
 findBestFreeParam <- function(d, p) {
 # Finds the best free parameter. The best free parameter is the one that
-# produces the greatest correlation between model predictions and data
+# produces the lowest RMSE between model predictions and data in a linear
+# regression using 10-fold cross-validation
 #
 # Arguments:
 #   d: Data frame with mean data
 #   p: Data frame with model predictions
 #
 # Returns a list containing the best-fitting parameter and the corresponding
-# correlation coefficient
-  
+# correlation coefficient and RMSE
+
+  train_control <- trainControl(method="cv", number=10)
+
 	freeParams <- seq(0.05, 3.0, 0.05)
 	best.f <- 0.05
+  best.rmse <- Inf
 	best.r <- 0
 
 	for (f in freeParams) {
 		# Get model predictions
 		preds <- p %>% filter(FreeParam == f)
+    preds <- preds$Probability
+    # Get mean ratings
+    m_rating <- d$Mean.Rating
 
-		# Compute correlation between model prediction with this parameter value and data
-		r <- cor(d$Mean.Rating, preds$Probability)
-		if (r > best.r) {
-			best.f <- f
-			best.r <- r
-		}
+    dataAndPreds <- data.frame(preds, m_rating)
+
+    # Note that this function will throw warnings when Rsquared is undefined which
+    # will sometimes happen when training with the simpicity model b/c the predictions
+    # only take on a few fixed values. Therefore, if the validation set happens to be
+    # drawn only from predictions that all have the same value, then Rsquared cannot
+    # be computed. But that's not a problem given that we are using RMSE as a metric
+    # (which can be computed).
+    cvm <- train(m_rating ~ preds, data=dataAndPreds, trControl=train_control, method="lm")
+
+    # If this beats the current best value, record the new value and compute correlation
+    if (cvm$results$RMSE < best.rmse) {
+      best.rmse <- cvm$results$RMSE
+      best.r <- cor(dataAndPreds$m_rating, dataAndPreds$preds)
+      best.f <- f
+    }
 	}
-	
-	return(list(best.f,best.r))
+
+	return(list(best.f,best.r,best.rmse))
 }
 
 # Read in the data files
@@ -46,11 +64,11 @@ likesClownsData <- likesClownsData %>% select(-X, -Reasoning)
 dislikesClownsData <- dislikesClownsData %>% select(-X, -Reasoning)
 
 # Number of total subjects (including subjects who failed attention check)
-N_likesClowns <- likesClownsData %>% 
+N_likesClowns <- likesClownsData %>%
                  select(Subject) %>%
                  rapply(function(x) length(unique(x)))
 cat(sprintf("Total N (likes clowns): %d", N_likesClowns),"\n")
-N_dislikesClowns <- dislikesClownsData %>% 
+N_dislikesClowns <- dislikesClownsData %>%
                  select(Subject) %>%
                  rapply(function(x) length(unique(x)))
 cat(sprintf("Total N (dislikes clowns): %d", N_dislikesClowns),"\n")
@@ -58,17 +76,17 @@ cat(sprintf("Total N (dislikes clowns): %d", N_dislikesClowns),"\n")
 # Eliminate subjects who failed the attention check
 
 # Creates a unique list of indices of subjects who failed
-excludedSubjects_likesClowns <- likesClownsData %>% 
+excludedSubjects_likesClowns <- likesClownsData %>%
                                 filter(Condition == 4) %>%
                                 gather(Exp, Rating, Explanation.00:Explanation.12) %>%
 						        filter(Rating != -1) %>%
-								select(Subject) %>% 
+								select(Subject) %>%
 								rapply(function(x) unique(x))
-excludedSubjects_dislikesClowns <- dislikesClownsData %>% 
+excludedSubjects_dislikesClowns <- dislikesClownsData %>%
                                    filter(Condition == 4) %>%
                                    gather(Exp, Rating, Explanation.00:Explanation.12) %>%
 								   filter(Rating != -1) %>%
-								   select(Subject) %>% 
+								   select(Subject) %>%
 								   rapply(function(x) unique(x))
 
 # Exclude subjects
@@ -76,11 +94,11 @@ likesClownsData <- likesClownsData %>% filter(!(Subject %in% excludedSubjects_li
 dislikesClownsData <- dislikesClownsData %>% filter(!(Subject %in% excludedSubjects_dislikesClowns))
 
 # Now compute number of remaining (non-excluded) subjects
-N_likesClowns <- likesClownsData %>% 
+N_likesClowns <- likesClownsData %>%
                  select(Subject) %>%
                  rapply(function(x) length(unique(x)))
 cat(sprintf("Final N after exclusions (likes clowns): %d", N_likesClowns),"\n")
-N_dislikesClowns <- dislikesClownsData %>% 
+N_dislikesClowns <- dislikesClownsData %>%
                  select(Subject) %>%
                  rapply(function(x) length(unique(x)))
 cat(sprintf("Final N after exclusions (dislikes clowns): %d", N_dislikesClowns),"\n")
@@ -158,12 +176,12 @@ bestFittingModel_dislikesClowns_rationalsupport <- dislikesClownsPredictions_rat
 bestFittingModel_dislikesClowns_simplicity <- dislikesClownsPredictions_simplicity %>% filter(FreeParam == best_dislikesClowns_simplicity[1])
 bestFittingModel_dislikesClowns_nonprob <- dislikesClownsPredictions_nonprob %>% filter(FreeParam == best_dislikesClowns_nonprob[1])
 
-likesClowns_means <- likesClowns_means %>% 
+likesClowns_means <- likesClowns_means %>%
                      mutate(fullmodel = bestFittingModel_likesClowns$Probability,
 					        rationalsupport = bestFittingModel_likesClowns_rationalsupport$Probability,
 							simplicity = bestFittingModel_likesClowns_simplicity$Probability,
-							nonprob = bestFittingModel_likesClowns_nonprob$Probability) 
-dislikesClowns_means <- dislikesClowns_means %>% 
+							nonprob = bestFittingModel_likesClowns_nonprob$Probability)
+dislikesClowns_means <- dislikesClowns_means %>%
                         mutate(fullmodel = bestFittingModel_dislikesClowns$Probability,
 						       rationalsupport = bestFittingModel_dislikesClowns_rationalsupport$Probability,
 							   simplicity = bestFittingModel_dislikesClowns_simplicity$Probability,
@@ -192,7 +210,7 @@ cat(sprintf("Best-fitting parameter (dislikes clowns): %f (r = %f)", best_dislik
 
 # Make the plots
 
-print(ggplot(data=likesClowns_means, 
+print(ggplot(data=likesClowns_means,
              aes(x=fullmodel, y=Mean.Rating, color=Condition, shape=Condition)) +
              geom_point() +
              ylim(0,7) +
@@ -205,7 +223,7 @@ print(ggplot(data=likesClowns_means,
              scale_color_manual(values=c("#1b9e77", "#d95f02", "#7570b3")))
 ggsave("decisionnetmodel_likesclowns.pdf", width=2.8, height=1.8, units="in")
 
-print(ggplot(data=dislikesClowns_means, 
+print(ggplot(data=dislikesClowns_means,
              aes(x=fullmodel, y=Mean.Rating, color=Condition, shape=Condition)) +
              geom_point() +
              ylim(0,7) +
@@ -218,7 +236,7 @@ print(ggplot(data=dislikesClowns_means,
              scale_color_manual(values=c("#1b9e77", "#d95f02", "#7570b3")))
 ggsave("decisionnetmodel_dislikesclowns.pdf", width=2.8, height=1.8, units="in")
 
-print(ggplot(data=likesClowns_means, 
+print(ggplot(data=likesClowns_means,
              aes(x=rationalsupport, y=Mean.Rating, color=Condition, shape=Condition)) +
              geom_point() +
              ylim(0,7) +
@@ -231,7 +249,7 @@ print(ggplot(data=likesClowns_means,
              scale_color_manual(values=c("#1b9e77", "#d95f02", "#7570b3")))
 ggsave("rationalsupportmodel_likesclowns.pdf", width=2.8, height=1.8, units="in")
 
-print(ggplot(data=dislikesClowns_means, 
+print(ggplot(data=dislikesClowns_means,
              aes(x=rationalsupport, y=Mean.Rating, color=Condition, shape=Condition)) +
              geom_point() +
              ylim(0,7) +
@@ -244,7 +262,7 @@ print(ggplot(data=dislikesClowns_means,
              scale_color_manual(values=c("#1b9e77", "#d95f02", "#7570b3")))
 ggsave("rationalsupportmodel_dislikesclowns.pdf", width=2.8, height=1.8, units="in")
 
-print(ggplot(data=likesClowns_means, 
+print(ggplot(data=likesClowns_means,
              aes(x=simplicity, y=Mean.Rating, color=Condition, shape=Condition)) +
              geom_point() +
              ylim(0,7) +
@@ -257,7 +275,7 @@ print(ggplot(data=likesClowns_means,
              scale_color_manual(values=c("#1b9e77", "#d95f02", "#7570b3")))
 ggsave("simplicitymodel_likesclowns.pdf", width=2.8, height=1.8, units="in")
 
-print(ggplot(data=dislikesClowns_means, 
+print(ggplot(data=dislikesClowns_means,
              aes(x=simplicity, y=Mean.Rating, color=Condition, shape=Condition)) +
              geom_point() +
              ylim(0,7) +
@@ -270,7 +288,7 @@ print(ggplot(data=dislikesClowns_means,
              scale_color_manual(values=c("#1b9e77", "#d95f02", "#7570b3")))
 ggsave("simplicitymodel_dislikesclowns.pdf", width=2.8, height=1.8, units="in")
 
-print(ggplot(data=likesClowns_means, 
+print(ggplot(data=likesClowns_means,
              aes(x=nonprob, y=Mean.Rating, color=Condition, shape=Condition)) +
              geom_point() +
              ylim(0,7) +
@@ -283,14 +301,14 @@ print(ggplot(data=likesClowns_means,
              scale_color_manual(values=c("#1b9e77", "#d95f02", "#7570b3")))
 ggsave("nonprobmodel_likesclowns.pdf", width=2.8, height=1.8, units="in")
 
-print(ggplot(data=dislikesClowns_means, 
+print(ggplot(data=dislikesClowns_means,
              aes(x=nonprob, y=Mean.Rating, color=Condition, shape=Condition)) +
              geom_point() +
              ylim(0,7) +
              xlim(0,0.008) +
              xlab("Model prediction") +
              ylab("Mean human ratings") +
-             theme(axis.title.y = element_text(angle=90, vjust=0.5), legend.position="bottom",
+             theme(axis.title.y = element_text(angle=90, vjust=0.5), legend.position="right",
                    text=element_text(size=9)) +
 			 ggtitle("Non-probabilistic model") +
              scale_color_manual(values=c("#1b9e77", "#d95f02", "#7570b3")))
@@ -311,7 +329,7 @@ dislikesClownsData <- dislikesClownsData %>% mutate(clownsPref = "dislikes")
 clownDataFull <- likesClownsData %>% full_join(dislikesClownsData)
 
 # Turn into tidy format and ignore Condition 4
-clownDataTidy <- clownDataFull %>% gather(Explanation, Rating, 3:15) %>% 
+clownDataTidy <- clownDataFull %>% gather(Explanation, Rating, 3:15) %>%
                                    filter(Condition != 4)
 
 
@@ -327,29 +345,35 @@ print(summary(aov(Rating ~ Condition * Explanation + Error(Subject/Explanation),
 
 # Run the Bayesian logistic regression model
 
-m <- brm(formula = Rating ~ clownsPref * Condition * Explanation + (1|Subject), data=clownDataDF, family=cumulative, iter=5000)
+m <- brm(formula = Rating ~ clownsPref * Condition * Explanation + (1 + Condition|Subject), data=clownDataDF,
+         family=cumulative, prior=set_prior("normal(0,10)"), iter=5000)
 summary(m)
 
 # Test for a main effect of clown preference
 # I do this by running the model without including clown preference as an effect
-m_reduced <- brm(formula = Rating ~ Condition * Explanation + (1|Subject), data=clownDataDF, family=cumulative, iter=5000)
-# We can then compare the two model fits using leave-one-out (LOO) IC
-# This should show that model m (which includes clown preference) has a better model fit (lower LOOIC)
-# than model m2
-loo(m,m_reduced)
+m_reduced <- brm(formula = Rating ~ Condition * Explanation + (1 + Condition|Subject), data=clownDataDF,
+                 family=cumulative, prior=set_prior("normal(0,10)"), iter=5000)
+# We can then compare the two model fits using leave-one-out cross validataion
+loo1 <- loo(m)
+loo2 <- loo(m_reduced)
+# Compare models using ELPD (expected log predicted density)
+loo_compare(loo1,loo2)
+
 
 # Test for interaction
 
-# Re-level with condition 2 as reference level and run model again in order to 
+# Re-level with condition 2 as reference level and run model again in order to
 # do some of the tests
 clownDataDF$Condition <- relevel(clownDataDF$Condition, 2)
-m2 <- brm(formula = Rating ~ clownsPref * Condition * Explanation + (1|Subject), data=clownDataDF, family=cumulative, iter=5000)
+m2 <- brm(formula = Rating ~ clownsPref * Condition * Explanation + (1 + Condition|Subject), data=clownDataDF,
+          family=cumulative, prior=set_prior("normal(0,10)"), iter=5000)
 summary(m2)
 
 # Re-level with likes as reference level and run model again in order to do some of
 # the tests
 clownDataDF$clownsPref <- relevel(clownDataDF$clownsPref, "likes")
-m3 <- brm(formula = Rating ~ clownsPref * Condition * Explanation + (1|Subject), data=clownDataDF, family=cumulative, iter=5000)
+m3 <- brm(formula = Rating ~ clownsPref * Condition * Explanation + (1 + Condition|Subject), data=clownDataDF,
+          family=cumulative, prior=set_prior("normal(0,10)"), iter=5000)
 summary(m3)
 
 # We will also run a few specific tests for interactions
@@ -407,14 +431,19 @@ allPredictions <- likesClowns_means %>% mutate(clownsPref = "likes") %>%
 allPredictions$Condition <- as.factor(allPredictions$Condition)
 clownDataTidy$Condition <- as.factor(clownDataTidy$Condition)
 # Combine again with data
-ratingsAndScores <- clownDataTidy %>% left_join(allPredictions, by=c("Condition", "Explanation", "clownsPref")) 
+ratingsAndScores <- clownDataTidy %>% left_join(allPredictions, by=c("Condition", "Explanation", "clownsPref"))
 
 # Run model to test for effects of rational support and simplicity
-m4 <- brm(formula = Rating ~ rationalsupport * simplicity + (1|Subject), data=ratingsAndScores, family=cumulative, iter=5000)
+m4 <- brm(formula = Rating ~ rationalsupport * simplicity + (1|Subject), data=ratingsAndScores,
+          family=cumulative, prior=set_prior("normal(5,10)"), iter=5000)
 summary(m4)
+
+# Save posterior samples for rational support and simplicity coefficients
+post_samples <- posterior_samples(m4)
+post_samples <- post_samples %>% select(b_rationalsupport, b_simplicity)
+write.csv(post_samples, "posterior_samples_expt3.csv")
 
 h9 <- hypothesis(m4, "rationalsupport > 0")
 print(h9)
 h10 <- hypothesis(m4, "simplicity > 0")
 print(h10)
-

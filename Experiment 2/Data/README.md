@@ -1,5 +1,5 @@
-Experiment 1B data
-==================
+Experiment 2 data
+=================
 
 * `condition1.csv`: Data from Condition 1: ![X sat closest to A](../../Experiment%201A/Materials/case_x1.png)
 * `condition2.csv`: Data from Condition 2: ![X sat between A and B](../../Experiment%201A/Materials/case_x2.png)

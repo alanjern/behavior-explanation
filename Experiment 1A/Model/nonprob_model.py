@@ -100,7 +100,7 @@ def utility_seating(net, decisions, k):
 
     # First compute utility for chosen seat
     d = [] # distance list, filled with distance from each person
-    r = [] # 
+    r = [] #
     for node in net['nodes']:
         if node['type'] != 'utility' and node['type'] != 'decision':
             val = int(node['val'])
@@ -109,13 +109,15 @@ def utility_seating(net, decisions, k):
     for i in range(len(d)):
         for j in range(len(near_far)):
             if d[i][1] == near_far[j][2]:
-                # e^(-kd) utility
+                # e^(-kd) utility: Utility function used in main text
                 r.append(near_far[j][0] + near_far[j][1]*np.exp(-k*d[i][0]))
+
+                # Alternative utility function used in Appendix (to allow for negative utiliities)
                 #r.append(near_far[j][1]*np.exp(-k*d[i][0]))
                 break
     #return np.sum(r)
     u_chosen = np.sum(r)
-	
+
     # Now compute utilities for all the other options (non-chosen seats)
     u_nonchosen = []
     for seat in decisions['other_options']:
@@ -128,14 +130,19 @@ def utility_seating(net, decisions, k):
         for i in range(len(d)):
             for j in range(len(near_far)):
                 if d[i][1] == near_far[j][2]:
+                    # e^(-kd) utility: Utility function used in main text
                     r.append(near_far[j][0] + near_far[j][1]*np.exp(-k*d[i][0]))
+
+                    # Alternative utility function used in Appendix (to allow for negative utiliities)
                     #r.append(near_far[j][1]*np.exp(-k*d[i][0]))
                     break
         u_nonchosen.append(np.sum(r))
-    
-    #print(u_chosen)
-    #print(u_nonchosen)
-    return u_chosen
+
+    # softmax decision function (used in main text)
+    return u_chosen / np.sum(u_nonchosen)
+
+    # Luce choice rule alternative decison function (used in Appendix)
+    #return np.exp(u_chosen) / np.sum(np.exp(u_nonchosen))
 
 def evaluate_network(net, decisions, knowledge, k):
     """
@@ -156,7 +163,7 @@ def number_of_vals(net, node):
     elif node['type'] == 'utility':
         # if it is a utility node, the length of 'near_far' is the number of people cared about
         # and it is doubled because you can be near or farm from each of those people
-        # and 6 is added because there are 6 places you can sit 
+        # and 6 is added because there are 6 places you can sit
         # (9 total seat - 3 people already there)
         return 6 + 2*len(net['props']['near_far'])
     elif node['type'] == 'chance':
@@ -201,32 +208,32 @@ if __name__ == '__main__':
     total_knowledge = [] # store all the knowledge prediction values for plotting
     total_complexity = [] # store all complexity values for plotting
     total_utility = [] # store all utility values for plotting
-    
+
     # Arrays of data to make up the final data frame to output
     conditions = [] # list of condition numbers
     explanations = [] # list of explanations
     params = [] # list of k parameter values
     predictions = [] # un-normalized predictions
-    
+
     for ind in [1,2,3]: # for each of the 4 cases, load the seat network
-        if ind == 1: 
+        if ind == 1:
             import seat_networks_x1 as sn
         elif ind == 2:
             import seat_networks_x2 as sn
         elif ind == 3:
             import seat_networks_x3 as sn
         complexity = [] # complexity values
-        
+
         # Go through all 13 explanations
 
         print('\n======= Condition ' + str(ind) + ' ============\n')
-        
+
         # possible param values
         k_values = np.linspace(0.05,3,60)
-        
+
         for k in k_values:
-        
-            case1 = sn.seat_near_a() 
+
+            case1 = sn.seat_near_a()
             print('Near A:')
             u = evaluate_network(json.loads(case1[0]), json.loads(case1[1]), json.loads(case1[2]), k)
             c = compute_complexity(json.loads(case1[0]))
@@ -239,7 +246,7 @@ if __name__ == '__main__':
             explanations.append('Near A')
             predictions.append(prediction[0])
             params.append(k)
-            
+
             case1 = sn.seat_far_c()
             print('Far C:')
             u = evaluate_network(json.loads(case1[0]), json.loads(case1[1]), json.loads(case1[2]), k)
@@ -247,14 +254,14 @@ if __name__ == '__main__':
             complexity.append(c[0])
             prediction = (u*(1.0/c[0]), u*(1.0/c[1]))
             print('Prediction:', prediction[0])
-            
+
             # Store the predictions in the data frame
             conditions.append(ind)
             explanations.append('Far C')
             predictions.append(prediction[0])
             params.append(k)
-            
-            
+
+
             case1 = sn.seat_near_a_far_c()
             print('Near A, Far C:')
             u = evaluate_network(json.loads(case1[0]), json.loads(case1[1]), json.loads(case1[2]), k)
@@ -262,13 +269,13 @@ if __name__ == '__main__':
             complexity.append(c[0])
             prediction = (u*(1.0/c[0]), u*(1.0/c[1]))
             print('Prediction:', prediction[0])
-            
+
             # Store the predictions in the data frame
             conditions.append(ind)
             explanations.append('Near A, Far C')
             predictions.append(prediction[0])
             params.append(k)
-            
+
             case1 = sn.seat_near_a_far_b_far_c()
             print('Near A, Far B and C:')
             u = evaluate_network(json.loads(case1[0]), json.loads(case1[1]), json.loads(case1[2]), k)
@@ -276,14 +283,14 @@ if __name__ == '__main__':
             complexity.append(c[0])
             prediction = (u*(1.0/c[0]), u*(1.0/c[1]))
             print('Prediction:', prediction[0])
-            
+
             # Store the predictions in the data frame
             conditions.append(ind)
             explanations.append('Near A, Far B, Far C')
             predictions.append(prediction[0])
             params.append(k)
-            
-            
+
+
             case1 = sn.seat_near_a_far_b()
             print('Near A, Far B:')
             u = evaluate_network(json.loads(case1[0]), json.loads(case1[1]), json.loads(case1[2]), k)
@@ -291,14 +298,14 @@ if __name__ == '__main__':
             complexity.append(c[0])
             prediction = (u*(1.0/c[0]), u*(1.0/c[1]))
             print('Prediction:', prediction[0])
-            
+
             # Store the predictions in the data frame
             conditions.append(ind)
             explanations.append('Near A, Far B')
             predictions.append(prediction[0])
             params.append(k)
-            
-            
+
+
             case1 = sn.seat_far_b()
             print('Far B:')
             u = evaluate_network(json.loads(case1[0]), json.loads(case1[1]), json.loads(case1[2]), k)
@@ -306,14 +313,14 @@ if __name__ == '__main__':
             complexity.append(c[0])
             prediction = (u*(1.0/c[0]), u*(1.0/c[1]))
             print('Prediction:', prediction[0])
-            
+
             # Store the predictions in the data frame
             conditions.append(ind)
             explanations.append('Far B')
             predictions.append(prediction[0])
             params.append(k)
-            
-            
+
+
             case1 = sn.seat_far_b_far_c()
             print('Far B and C:')
             u = evaluate_network(json.loads(case1[0]), json.loads(case1[1]), json.loads(case1[2]), k)
@@ -321,14 +328,14 @@ if __name__ == '__main__':
             complexity.append(c[0])
             prediction = (u*(1.0/c[0]), u*(1.0/c[1]))
             print('Prediction:', prediction[0])
-            
+
             # Store the predictions in the data frame
             conditions.append(ind)
             explanations.append('Far B, Far C')
             predictions.append(prediction[0])
             params.append(k)
-            
-            
+
+
             case1 = sn.seat_far_a()
             print('Far A:')
             u = evaluate_network(json.loads(case1[0]), json.loads(case1[1]), json.loads(case1[2]), k)
@@ -336,14 +343,14 @@ if __name__ == '__main__':
             complexity.append(c[0])
             prediction = (u*(1.0/c[0]), u*(1.0/c[1]))
             print('Prediction:', prediction[0])
-            
+
             # Store the predictions in the data frame
             conditions.append(ind)
             explanations.append('Far A')
             predictions.append(prediction[0])
             params.append(k)
-            
-            
+
+
             case1 = sn.seat_near_b_far_c()
             print('Near B, Far C:')
             u = evaluate_network(json.loads(case1[0]), json.loads(case1[1]), json.loads(case1[2]), k)
@@ -351,14 +358,14 @@ if __name__ == '__main__':
             prediction = (u*(1.0/c[0]), u*(1.0/c[1]))
             complexity.append(c[0])
             print('Prediction:', prediction[0])
-            
+
             # Store the predictions in the data frame
             conditions.append(ind)
             explanations.append('Near B, Far C')
             predictions.append(prediction[0])
             params.append(k)
-            
-            
+
+
             case1 = sn.seat_near_a_near_b_far_c()
             print('Near A and B, Far C:')
             u = evaluate_network(json.loads(case1[0]), json.loads(case1[1]), json.loads(case1[2]), k)
@@ -366,14 +373,14 @@ if __name__ == '__main__':
             complexity.append(c[0])
             prediction = (u*(1.0/c[0]), u*(1.0/c[1]))
             print('Prediction:', prediction[0])
-            
+
             # Store the predictions in the data frame
             conditions.append(ind)
             explanations.append('Near A, Near B, Far C')
             predictions.append(prediction[0])
             params.append(k)
-            
-            
+
+
             case1 = sn.seat_near_a_near_b()
             print('Near A and B:')
             u = evaluate_network(json.loads(case1[0]), json.loads(case1[1]), json.loads(case1[2]), k)
@@ -381,14 +388,14 @@ if __name__ == '__main__':
             prediction = (u*(1.0/c[0]), u*(1.0/c[1]))
             complexity.append(c[0])
             print('Prediction:', prediction[0])
-            
+
             # Store the predictions in the data frame
             conditions.append(ind)
             explanations.append('Near A, Near B')
             predictions.append(prediction[0])
             params.append(k)
-            
-            
+
+
             case1 = sn.seat_near_b()
             print('Near B:')
             u = evaluate_network(json.loads(case1[0]), json.loads(case1[1]), json.loads(case1[2]), k)
@@ -396,14 +403,14 @@ if __name__ == '__main__':
             prediction = (u*(1.0/c[0]), u*(1.0/c[1]))
             complexity.append(c[0])
             print('Prediction:', prediction[0])
-            
+
             # Store the predictions in the data frame
             conditions.append(ind)
             explanations.append('Near B')
             predictions.append(prediction[0])
             params.append(k)
-            
-            
+
+
             case1 = sn.seat_far_a_far_c()
             print('Far A and C:')
             u = evaluate_network(json.loads(case1[0]), json.loads(case1[1]), json.loads(case1[2]), k)
@@ -411,18 +418,18 @@ if __name__ == '__main__':
             prediction = (u*(1.0/c[0]), u*(1.0/c[1]))
             complexity.append(c[0])
             print('Prediction:', prediction[0])
-            
+
             # Store the predictions in the data frame
             conditions.append(ind)
             explanations.append('Far A, Far C')
             predictions.append(prediction[0])
             params.append(k)
-        
+
     # Create the data frame
-    predictionsDataFrame = pd.DataFrame({ 'condition': conditions, 
+    predictionsDataFrame = pd.DataFrame({ 'condition': conditions,
                                           'explanation': explanations,
                                           'k': params,
                                           'prediction': predictions})
-        
+
     # Output predictions into a CSV file
     predictionsDataFrame.to_csv('nonprobmodel_predictions.csv')

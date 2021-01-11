@@ -1,7 +1,7 @@
 Experiment 1B data
 ==================
 
-`rawdata_v1.csv` contains subjects' ratings from Version 1 of the experiment, depicted below.
+`rawdata_v1.csv` contains subjects' ratings from the version of the experiment depicted below.
 
 * Condition 1: ![X sat closest to A](../Materials/images/condition1_v1.png)
 * Condition 2: ![X sat between A and B](../Materials/images/condition1_v1.png)
