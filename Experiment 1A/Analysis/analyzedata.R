@@ -4,6 +4,7 @@ library(tidyverse)
 library(ggrepel)
 library(effsize)
 library(brms)
+library(caret)
 
 # Clear workspace
 rm(list=ls())
@@ -30,19 +31,21 @@ ratingsTidyDF$condition <- relevel(ratingsTidyDF$condition, 2) # set condition 2
 # Explanation:
 #   - condition * explanation makes sure that it also includes coefficients for every interaction
 #     of coefficient x explanation (that is, it will allow me to perform comparisons of individiual conditions)
-#   - (1|subject) is because subject is a random effect (i.e. it is not a fixed effect that would remain 
-#     the same if the experiment were run again
+#   - (1|subject) is because subject is a random effect and fits an intercept parameter for each subject
 #   - family=cumulative runs ordinal regression
+#   - set group level priors to a normal(0,10): a fairly diffuse and informative prior reflecting the
+#     fact that a skeptic wouldn't necessarily have any expections about the IVs in our experiment
 #   - set iterations to a high number because recommendation is that each coefficient should have an effective
 #     gibbs sample estimate > 1000 and lower iteration numbers resulted in not enough eff. samples
-m <- brm(formula = rating ~ condition * explanation + (1|subject), data=ratingsTidyDF, family=cumulative, iter=5000)
+m <- brm(formula = rating ~ condition * explanation + (1|subject), data=ratingsTidyDF, family=cumulative,
+         prior=set_prior("normal(0,10)"), iter=5000)
 summary(m)
 
 # Perform the hypothesis tests
-# Note: Unlike in a t-test, we are not comparing means here, but the learned coefficients in the 
+# Note: Unlike in a t-test, we are not comparing means here, but the learned coefficients in the
 #       regression model from above. So what we are looking for here is the posterior probability
 #       assigned to the H1 that the difference in coefficient values for the interactions for the
-#       two conditions of interest is sufficiently greater than H0 that the difference is 0.   
+#       two conditions of interest is sufficiently greater than H0 that the difference is 0.
 # (These predictions are based on exploratory analysis of the data)
 # ------------------------
 
@@ -96,8 +99,8 @@ print(cohen.d(r3$rating,r4$rating,paired=TRUE))
 #explanationOrder = c("near.A", "far.C", "far.B", "far.A",
 #                 "near.B", "near.A.far.C", "near.A.far.B",
 #                 "far.B.far.C", "near.B.far.C",
-#                 "near.A.near.B", "far.A.far.C", 
-#                 "near.A.near.B.far.C", 
+#                 "near.A.near.B", "far.A.far.C",
+#                 "near.A.near.B.far.C",
 #                 "near.A.far.B.far.C")
 
 # Split by condition
@@ -107,18 +110,18 @@ cond3ratingsTidy <- ratingsTidy %>% filter(condition == 3)
 
 # Sort condition ratings by mean rating
 # This is the order in which the data will be plotted in all plots
-cond1meanRatings <- cond1ratingsTidy %>% group_by(explanation) %>% 
+cond1meanRatings <- cond1ratingsTidy %>% group_by(explanation) %>%
             summarize(m = mean(rating))
 cond1meanRatings <- cond1meanRatings %>% arrange(m)
 
-cond2meanRatings <- cond2ratingsTidy %>% group_by(explanation) %>% 
+cond2meanRatings <- cond2ratingsTidy %>% group_by(explanation) %>%
             summarize(m = mean(rating))
-cond2meanRatings <- cond2ratingsTidy %>% group_by(explanation) %>% 
+cond2meanRatings <- cond2ratingsTidy %>% group_by(explanation) %>%
             summarize(m = mean(rating)) %>% arrange(m)
 
 cond3meanRatings <- cond3ratingsTidy %>% group_by(explanation) %>%
             summarize(m = mean(rating)) %>% arrange(m)
-            
+
 # Compute mean ratings across all conditions and group together
 # Squish the condition and explanation columns together into a single column named "datapoint"
 meanRatings <- ratingsTidy %>% unite(datapoint, condition, explanation) %>%
@@ -146,7 +149,15 @@ rmax_utility = -Inf
 bestk_utility = 0.05
 besta_utility = 0.05
 
+rmse_min_fullmodel = Inf
+rmse_min_simplicty = Inf
+rmse_min_rationalmodel = Inf
+rmse_min_utility = Inf
+
+print("Testing differing k parameters to find best-fitting value ...")
 for (k_i in k_vals) {
+
+    print(k_i)
 
     # Normalize model predictions so that they sum to 1
     cond1predictions <- predictions %>% filter(condition == 1, k == k_i)
@@ -157,7 +168,7 @@ for (k_i in k_vals) {
     cond1predictions$rationalsupport <- cond1predictions$rationalsupport /
                                   sum(cond1predictions$rationalsupport)
 
-                              
+
     cond2predictions <- predictions %>% filter(condition == 2, k == k_i)
     cond2predictions$fullmodel <- cond2predictions$fullmodel /
                                   sum(cond2predictions$fullmodel)
@@ -173,17 +184,17 @@ for (k_i in k_vals) {
                                   sum(cond3predictions$simplicity)
     cond3predictions$rationalsupport <- cond3predictions$rationalsupport /
                                   sum(cond3predictions$rationalsupport)
-                              
+
     # Put the predictions back together
     predictions2 <- bind_rows(cond1predictions, cond2predictions, cond3predictions)
     predictions2 <- predictions2 %>% select(-X1) # Leave out the superfluous "X" column that is basically just a row number
-                              
+
     # Reshape into tidy format
-    cond1predictionsTidy <- cond1predictions %>% 
+    cond1predictionsTidy <- cond1predictions %>%
                                 gather(model, prediction, c("fullmodel", "simplicity", "rationalsupport"))
-    cond2predictionsTidy <- cond2predictions %>% 
+    cond2predictionsTidy <- cond2predictions %>%
                                 gather(model, prediction, c("fullmodel", "simplicity", "rationalsupport"))
-    cond3predictionsTidy <- cond3predictions %>% 
+    cond3predictionsTidy <- cond3predictions %>%
                                 gather(model, prediction, c("fullmodel", "simplicity", "rationalsupport"))
 
     # Group all conditions' predictions together
@@ -191,7 +202,7 @@ for (k_i in k_vals) {
     predictionsTidy$condition <- as.character(predictionsTidy$condition)
 
     # Put data and predictions together in the same data frame
-    dataAndPredictions <- left_join(meanRatings, predictionsTidy, 
+    dataAndPredictions <- left_join(meanRatings, predictionsTidy,
             by=c("condition"="condition", "explanation"="explanation"))
     dataAndPredictions_fullmodel <- dataAndPredictions %>% filter(model=="fullmodel")
     dataAndPredictions_simplicity <- dataAndPredictions %>% filter(model=="simplicity")
@@ -199,33 +210,75 @@ for (k_i in k_vals) {
 
     predictions_utility$condition <- as.character(predictions_utility$condition)
     predictions_utility2 <- predictions_utility %>% select(-X1) %>% filter(k == k_i)
-    dataAndPredictions_utility <- left_join(predictions_utility2, meanRatings, 
+    dataAndPredictions_utility <- left_join(predictions_utility2, meanRatings,
                                            by=c("condition"="condition", "explanation"="explanation"))
 
+
+    # Fit k parameter using 10-fold cross-validation
+    # On each training run, fit a linear regression model using model predictions to predict subject response means
+    # I use RMSE as a measure of model fit, choosing the k parameter that minimizes RMSE
+    # However, I report the corresponding correlation coefficient r in figures in the paper
+
+    # Note that the train function will throw warnings when Rsquared is undefined which
+    # will sometimes happen when training with the simpicity model b/c the predictions
+    # only take on a few fixed values. Therefore, if the validation set happens to be
+    # drawn only from predictions that all have the same value, then Rsquared cannot
+    # be computed. But that's not a problem given that we are using RMSE as a metric
+    # (which can be computed).
+    train_control <- trainControl(method="cv", number=10)
+    cvm_fullmodel <- train(m ~ prediction, data=dataAndPredictions_fullmodel, trControl=train_control, method="lm")
+    cvm_simplicity <- train(m ~ prediction, data=dataAndPredictions_simplicity, trControl=train_control, method="lm")
+    cvm_rationalsupport <- train(m ~ prediction, data=dataAndPredictions_rationalsupport, trControl=train_control, method="lm")
+    cvm_utility <- train(m ~ prediction, data=dataAndPredictions_utility, trControl=train_control, method="lm")
+
+    if (cvm_fullmodel$results$RMSE < rmse_min_fullmodel) {
+      rmse_min_fullmodel <- cvm_fullmodel$results$RMSE
+      rmax_fullmodel <- cor(dataAndPredictions_fullmodel$m, dataAndPredictions_fullmodel$prediction)
+      bestk_fullmodel <- k_i
+    }
+
+    if (cvm_simplicity$results$RMSE < rmse_min_simplicty) {
+      rmse_min_simplicty <- cvm_simplicity$results$RMSE
+      rmax_simplicity <- cor(dataAndPredictions_simplicity$m, dataAndPredictions_simplicity$prediction)
+      bestk_simplicity <- k_i
+    }
+
+    if (cvm_rationalsupport$results$RMSE < rmse_min_rationalmodel) {
+      rmse_min_rationalmodel <- cvm_rationalsupport$results$RMSE
+      rmax_rationalsupport <- cor(dataAndPredictions_rationalsupport$m, dataAndPredictions_rationalsupport$prediction)
+      bestk_rationalsupport <- k_i
+    }
+
+    if (cvm_utility$results$RMSE < rmse_min_utility) {
+      rmse_min_utility <- cvm_utility$results$RMSE
+      rmax_utility <- cor(dataAndPredictions_utility$m, dataAndPredictions_utility$prediction)
+      bestk_utility <- k_i
+    }
+
     # Compute correlations
-    r_fullmodel <- cor(dataAndPredictions_fullmodel$m, dataAndPredictions_fullmodel$prediction)
-    if (r_fullmodel > rmax_fullmodel) {
-        rmax_fullmodel <- r_fullmodel
-        bestk_fullmodel <- k_i
-    }
-
-    r_simplicity <- cor(dataAndPredictions_simplicity$m, dataAndPredictions_simplicity$prediction)
-    if (r_simplicity > rmax_simplicity) {
-        rmax_simplicity <- r_simplicity
-        bestk_simplicity <- k_i
-    }
-
-    r_rationalsupport <- cor(dataAndPredictions_rationalsupport$m, dataAndPredictions_rationalsupport$prediction)
-    if (r_rationalsupport > rmax_rationalsupport) {
-        rmax_rationalsupport <- r_rationalsupport
-        bestk_rationalsupport <- k_i
-    }
-
-    r_utility <- cor(dataAndPredictions_utility$m, dataAndPredictions_utility$prediction)
-    if (r_utility > rmax_utility) {
-        rmax_utility <- r_utility
-        bestk_utility <- k_i
-    }
+    # r_fullmodel <- cor(dataAndPredictions_fullmodel$m, dataAndPredictions_fullmodel$prediction)
+    # if (r_fullmodel > rmax_fullmodel) {
+    #     rmax_fullmodel <- r_fullmodel
+    #     bestk_fullmodel <- k_i
+    # }
+    #
+    # r_simplicity <- cor(dataAndPredictions_simplicity$m, dataAndPredictions_simplicity$prediction)
+    # if (r_simplicity > rmax_simplicity) {
+    #     rmax_simplicity <- r_simplicity
+    #     bestk_simplicity <- k_i
+    # }
+    #
+    # r_rationalsupport <- cor(dataAndPredictions_rationalsupport$m, dataAndPredictions_rationalsupport$prediction)
+    # if (r_rationalsupport > rmax_rationalsupport) {
+    #     rmax_rationalsupport <- r_rationalsupport
+    #     bestk_rationalsupport <- k_i
+    # }
+    #
+    # r_utility <- cor(dataAndPredictions_utility$m, dataAndPredictions_utility$prediction)
+    # if (r_utility > rmax_utility) {
+    #     rmax_utility <- r_utility
+    #     bestk_utility <- k_i
+    # }
 }
 
 print("Full model max r: ")
@@ -262,10 +315,10 @@ fullmodel_predictions <- bind_rows(fullmodel_c1, fullmodel_c2, fullmodel_c3)
 fullmodel_tidy <- fullmodel_predictions %>% gather(model, prediction, c("fullmodel"))
 fullmodel_tidy$condition <- as.character(fullmodel_tidy$condition)
 
-dataAndPredictions_fullmodel <- left_join(meanRatings, fullmodel_tidy, 
+dataAndPredictions_fullmodel <- left_join(meanRatings, fullmodel_tidy,
         by=c("condition"="condition", "explanation"="explanation"))
 
-        
+
 bestpredictions_simplicity <- predictions %>% select(-X1, -fullmodel, -rationalsupport) %>%
                                              filter(k == bestk_simplicity)
 simplicity_c1 <- bestpredictions_simplicity %>% filter(condition == 1)
@@ -279,10 +332,10 @@ simplicity_predictions <- bind_rows(simplicity_c1, simplicity_c2, simplicity_c3)
 simplicity_tidy <- simplicity_predictions %>% gather(model, prediction, c("simplicity"))
 simplicity_tidy$condition <- as.character(simplicity_tidy$condition)
 
-dataAndPredictions_simplicity <- left_join(meanRatings, simplicity_tidy, 
+dataAndPredictions_simplicity <- left_join(meanRatings, simplicity_tidy,
         by=c("condition"="condition", "explanation"="explanation"))
-        
-        
+
+
 bestpredictions_rationalsupport <- predictions %>% select(-X1, -simplicity, -fullmodel) %>%
                                              filter(k == bestk_rationalsupport)
 rationalsupport_c1 <- bestpredictions_rationalsupport %>% filter(condition == 1)
@@ -296,7 +349,7 @@ rationalsupport_predictions <- bind_rows(rationalsupport_c1, rationalsupport_c2,
 rationalsupport_tidy <- rationalsupport_predictions %>% gather(model, prediction, c("rationalsupport"))
 rationalsupport_tidy$condition <- as.character(rationalsupport_tidy$condition)
 
-dataAndPredictions_rationalsupport <- left_join(meanRatings, rationalsupport_tidy, 
+dataAndPredictions_rationalsupport <- left_join(meanRatings, rationalsupport_tidy,
         by=c("condition"="condition", "explanation"="explanation"))
 
 
@@ -310,15 +363,15 @@ utility_predictions_best <- bind_rows(utility_c1, utility_c2, utility_c3)
 utility_tidy <- utility_predictions_best %>% gather(model, prediction, c("prediction"))
 utility_tidy$condition <- as.character(utility_tidy$condition)
 
-dataAndPredictions_utility <- left_join(meanRatings, utility_tidy, 
+dataAndPredictions_utility <- left_join(meanRatings, utility_tidy,
        by=c("condition"="condition", "explanation"="explanation"))
 
 # Group all the (unnormalized) best predictions together and save
 bestpredictions_utility$condition <- as.numeric(bestpredictions_utility$condition)
 bestpredictions_utility <- bestpredictions_utility %>% rename(utility = prediction)
-bestpredictions <- bestpredictions_fullmodel %>% 
+bestpredictions <- bestpredictions_fullmodel %>%
                    left_join(bestpredictions_rationalsupport, by=c("condition","explanation")) %>%
-                   left_join(bestpredictions_simplicity, by=c("condition","explanation")) %>% 
+                   left_join(bestpredictions_simplicity, by=c("condition","explanation")) %>%
                    left_join(bestpredictions_utility, by=c("condition","explanation")) %>%
                    select(condition, explanation, fullmodel, rationalsupport, simplicity, utility)
 write_csv(bestpredictions, 'bestfitting_modelpredictions.csv')
@@ -333,7 +386,11 @@ bp$explanation <- as.factor(bp$explanation)
 bp$condition <- as.factor(bp$condition)
 ratingsAndScores <- rt %>% left_join(bp, by=c("condition","explanation"))
 
-m2 <- brm(formula = rating ~ rationalsupport * simplicity + (1|subject), data=ratingsAndScores, family=cumulative, iter=5000)
+# This time we set group level priors to a normal(5,10): a pretty diffuse but positive prior indicating slightly
+#     informative prior beliefs that params will be positive based on previous research
+
+m2 <- brm(formula = rating ~ rationalsupport * simplicity + (1|subject), data=ratingsAndScores,
+          family=cumulative, prior=set_prior("normal(5,10)"), iter=5000)
 summary(m2)
 
 h4 <- hypothesis(m2, "rationalsupport > 0")
@@ -341,6 +398,11 @@ print(h4)
 
 h5 <- hypothesis(m2, "simplicity > 0")
 print(h5)
+
+# Save posterior samples for rational support and simplicity coefficients
+post_samples <- posterior_samples(m2)
+post_samples <- post_samples %>% select(b_rationalsupport, b_simplicity)
+write.csv(post_samples, "posterior_samples_expt1A.csv")
 
 # Create plots
 
@@ -355,9 +417,8 @@ print(ggplot(data=cond1ratingsTidy, aes(x=fct_relevel(explanation,cond1meanRatin
              theme_grey(base_size=9) +
              xlab(element_blank()) +
              ylab("Rating"))
-             #labs(title = "Condition 1 explanation ratings"))
 ggsave("ratings_condition1.pdf", width=5, height=2, units="in")
-             
+
 
 # Condition 2
 print(ggplot(data=cond2ratingsTidy, aes(x=fct_relevel(explanation,cond2meanRatings$explanation), y=rating)) +
@@ -380,14 +441,14 @@ print(ggplot(data=cond3ratingsTidy, aes(x=fct_relevel(explanation,cond3meanRatin
              ylab("Rating"))
              #labs(title = "Condition 3 explanation ratings"))
 ggsave("ratings_condition3.pdf", width=5, height=2, units="in")
-             
-         
-         
+
+
+
 
 
 # Data and predictions
 
-print(ggplot(data=dataAndPredictions_fullmodel, 
+print(ggplot(data=dataAndPredictions_fullmodel,
              aes(x=prediction, y=m, color=condition, shape=condition, label=explanation)) +
              geom_point(size=0.9) +
              ylim(0,7) +
@@ -406,7 +467,7 @@ print(ggplot(data=dataAndPredictions_fullmodel,
                                   labels=c("1","2","3")))
 ggsave("decisionnet_results.pdf", width=6, height=4, units="in")
 
-print(ggplot(data=dataAndPredictions_fullmodel, 
+print(ggplot(data=dataAndPredictions_fullmodel,
              aes(x=prediction, y=m, color=condition, shape=condition, label=explanation)) +
              geom_point(size=0.9) +
              ylim(0,7) +
@@ -426,7 +487,7 @@ print(ggplot(data=dataAndPredictions_fullmodel,
                                   labels=c("1","2","3")))
 ggsave("decisionnet_results_withlabels.pdf", width=6, height=4, units="in")
 
-print(ggplot(data=dataAndPredictions_simplicity, 
+print(ggplot(data=dataAndPredictions_simplicity,
              aes(x=prediction, y=m, color=condition, shape=condition, label=explanation)) +
              geom_point(size=0.8) +
              ylim(0,7) +
@@ -446,8 +507,8 @@ print(ggplot(data=dataAndPredictions_simplicity,
                                   labels=c("1","2","3")) +
              guides(color=FALSE, shape=FALSE))
 ggsave("simplicity_results.pdf", width=3, height=2.5, units="in")
-             
-print(ggplot(data=dataAndPredictions_rationalsupport, 
+
+print(ggplot(data=dataAndPredictions_rationalsupport,
              aes(x=prediction, y=m, color=condition, label=explanation)) +
              geom_point(size=0.8) +
              ylim(0,7) +
@@ -460,7 +521,7 @@ print(ggplot(data=dataAndPredictions_rationalsupport,
              scale_color_manual(values=c("#1b9e77", "#d95f02", "#7570b3")))
 ggsave("rationalsupport_results.pdf", width=4, height=3, units="in")
 
-print(ggplot(data=dataAndPredictions_rationalsupport, 
+print(ggplot(data=dataAndPredictions_rationalsupport,
              aes(x=prediction, y=m, color=condition, shape=condition, label=explanation)) +
              geom_point(size=0.8) +
              ylim(0,7) +
@@ -481,7 +542,7 @@ print(ggplot(data=dataAndPredictions_rationalsupport,
              guides(shape=FALSE, color=FALSE))
 ggsave("rationalsupport_results_withlabels.pdf", width=3, height=2.5, units="in")
 
-print(ggplot(data=dataAndPredictions_utility, 
+print(ggplot(data=dataAndPredictions_utility,
             aes(x=prediction, y=m, color=condition, shape=condition, label=explanation)) +
             geom_point(size=0.9) +
             ylim(0,7) +
@@ -499,5 +560,3 @@ print(ggplot(data=dataAndPredictions_utility,
                                  breaks=c("1","2","3"),
                                  labels=c("1","2","3")))
 ggsave("nonprob_results_withlabels.pdf", width=6, height=4, units="in")
-
-

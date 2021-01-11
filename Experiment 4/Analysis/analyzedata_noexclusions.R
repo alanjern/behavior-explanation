@@ -1,8 +1,8 @@
 # Analyze data
 
 
-#  story: food allergy 
-# 
+#  story: food allergy
+#
 #      case: did not eat the appetizer
 #          explanations
 #              0: knew that the goat cheese contained benzatrate
@@ -25,8 +25,8 @@
 #              6: didn't know that the goat cheese contained benzatrate, or that the bell pepper contained benzatrate, or that the bacon contained benzatrate
 #              7: knew that the goat cheese contained benzatrate, and that the bell pepper contained benzatrate, and that the bacon contained benzatrate
 #
-#  story: robbery 
-# 
+#  story: robbery
+#
 #      case: arrested the culprit
 #          explanations
 #              0: knew that he had robbed the liquor store
@@ -49,8 +49,8 @@
 #              6: didn't know that he had robbed the liquor store, or the drug store, or the grocery store
 #              7: knew that he had robbed the liquor store, and the drug store, and the grocery store
 #
-#  story: locks 
-# 
+#  story: locks
+#
 #      case: got the keys before opening
 #          explanations
 #              0: knew that Lock A was locked
@@ -84,7 +84,7 @@ rm(list=ls())
 rawdata <- read.csv("../Data/data_all.csv")
 
 # Number of subjects before excluding subjects who failed attention check
-N_total <- rawdata %>% 
+N_total <- rawdata %>%
            select(Subject) %>%
            rapply(function(x) length(unique(x)))
 cat(sprintf("Total N: %d", N_total),"\n")
@@ -98,9 +98,9 @@ filteredSubjects <- rawdata %>%
 					select(Subject)
 #processedData <- rawdata %>% anti_join(filteredSubjects, by="Subject") %>%
 #                             select(-Reasoning)
-processedData <- rawdata %>% select(-Reasoning) 
- 
- 
+processedData <- rawdata %>% select(-Reasoning)
+
+
 # Number of subjects after excluding subjects who failed attention check
 N_final <- processedData %>%
            select(Subject) %>%
@@ -131,7 +131,7 @@ ex5 <- filter(pd, expl=="Explanation.5") %>% select(-expl) %>% mutate(explFactor
 ex6 <- filter(pd, expl=="Explanation.6") %>% select(-expl) %>% mutate(explFactors = "three")
 
 # Now glue them all back together
-grpdData <- ex0 %>% bind_rows(ex1) %>% bind_rows(ex2) %>% bind_rows(ex3) %>% 
+grpdData <- ex0 %>% bind_rows(ex1) %>% bind_rows(ex2) %>% bind_rows(ex3) %>%
               bind_rows(ex4) %>% bind_rows(ex5) %>% bind_rows(ex6)
 grpdData$explFactors <- as.factor(grpdData$explFactors)
 grpdData$explFactors <- relevel(grpdData$explFactors, "three")
@@ -140,33 +140,35 @@ grpdData$explFactors <- relevel(grpdData$explFactors, "three")
 grpdDataKnow <- grpdData %>% filter(Case == "didn't eat" | Case == "arrested" | Case == "got keys")
 grpdDataDidntKnow <- grpdData %>% filter(Case == "ate" | Case == "didn't arrest" | Case == "didn't get keys")
 
-# Run the Bayesian models to test if there is an effect of number of explanation factors           
-#m_know <- brm(rating ~ explFactors + (1|Subject), family="cumulative", data=grpdDataKnow, iter=5000)
-#m_didntKnow <- brm(rating ~ explFactors + (1|Subject), family="cumulative", data=grpdDataDidntKnow, iter=5000)
+# Run the Bayesian models to test if there is an effect of number of explanation factors
+m_know <- brm(rating ~ explFactors + (1|Subject), family="cumulative", data=grpdDataKnow,
+              prior=set_prior("normal(-5,10)"), iter=5000)
+m_didntKnow <- brm(rating ~ explFactors + (1|Subject), family="cumulative", data=grpdDataDidntKnow,
+                   prior=set_prior("normal(5,10)"), iter=5000)
 
 # Run the post-hoc tests
 
 cat(sprintf("\n=========================\n"))
 cat(sprintf("Know condition comparison tests\n"))
-#h1 <- hypothesis(m_know, "explFactorstwo > 0")
+h1 <- hypothesis(m_know, "explFactorstwo > 0")
 cat(sprintf("\n=========================\n"))
 cat(sprintf("Test that two-factor explanations is > three-factor\n"))
-#print(h1)
-#h2 <- hypothesis(m_know, "explFactorsone > explFactorstwo")
+print(h1)
+h2 <- hypothesis(m_know, "explFactorsone > explFactorstwo")
 cat(sprintf("\n=========================\n"))
 cat(sprintf("Test that one-factor explanations is > two-factor\n"))
-#print(h2)
+print(h2)
 
 cat(sprintf("\n=========================\n"))
 cat(sprintf("Didn't know condition comparison tests\n"))
-#h1 <- hypothesis(m_didntKnow, "explFactorstwo > 0")
+h1 <- hypothesis(m_didntKnow, "explFactorstwo > 0")
 cat(sprintf("\n=========================\n"))
 cat(sprintf("Test that two-factor explanations is > three-factor\n"))
-#print(h1)
-#h2 <- hypothesis(m_didntKnow, "explFactorsone > explFactorstwo")
+print(h1)
+h2 <- hypothesis(m_didntKnow, "explFactorsone > explFactorstwo")
 cat(sprintf("\n=========================\n"))
 cat(sprintf("Test that one-factor explanations is > two-factor\n"))
-#print(h2)
+print(h2)
 
 
 
@@ -174,28 +176,31 @@ cat(sprintf("Test that one-factor explanations is > two-factor\n"))
 # I tried running the model on all the data at once but the model wouldn't converge, so I'm
 # splitting the data set into chunks (by story) and running three separate models
 gd_food <- grpdData %>% filter(Story == "food allergy")
-#m_food <- brm(rating ~ Case + (1|Subject), family="cumulative", data=gd_food, iter=10000, control = list(adapt_delta=0.9))
-#h_food <- hypothesis(m_food, "Casedidnteat > 0", alpha = 0.05)
+m_food <- brm(rating ~ Case + (1|Subject), family="cumulative", data=gd_food,
+              prior=set_prior("normal(0,10)"), iter=8000, control = list(adapt_delta=0.9))
+h_food <- hypothesis(m_food, "Casedidnteat > 0", alpha = 0.05)
 
 cat(sprintf("\n=========================\n"))
 cat(sprintf("Test that didn't eat is diff from did eat\n"))
-#print(h_food)
+print(h_food)
 
 gd_robbery <- grpdData %>% filter(Story == "robbery")
-#m_robbery <- brm(rating ~ Case + (1|Subject), family="cumulative", data=gd_robbery, iter=10000, control = list(adapt_delta=0.9))
-#h_robbery <- hypothesis(m_robbery, "Casedidntarrest > 0", alpha = 0.05)
+m_robbery <- brm(rating ~ Case + (1|Subject), family="cumulative", data=gd_robbery, iter=8000,
+             prior=set_prior("normal(0,10)"), control = list(adapt_delta=0.9))
+h_robbery <- hypothesis(m_robbery, "Casedidntarrest > 0", alpha = 0.05)
 
 cat(sprintf("\n=========================\n"))
 cat(sprintf("Test that didn't arrest is diff from did arrest\n"))
-#print(h_robbery)
+print(h_robbery)
 
 gd_locks <- grpdData %>% filter(Story == "locks")
-#m_locks <- brm(rating ~ Case + (1|Subject), family="cumulative", data=gd_locks, iter=15000, control = list(adapt_delta=0.9))
-#h_locks <- hypothesis(m_locks, "Casegotkeys > 0", alhpa = 0.05)
+m_locks <- brm(rating ~ Case + (1|Subject), family="cumulative", data=gd_locks, iter=8000,
+           prior=set_prior("normal(0,10)"), control = list(adapt_delta=0.9))
+h_locks <- hypothesis(m_locks, "Casegotkeys > 0", alhpa = 0.05)
 
 cat(sprintf("\n=========================\n"))
 cat(sprintf("Test that got keys is diff from didn't get keys\n"))
-#print(h_locks)
+print(h_locks)
 
 
 # Compute the ANOVA
@@ -207,13 +212,13 @@ print((summary(aov(rating ~ Case * Story * expl + Error(Subject/(Story*expl)), d
 
 # Compute separate ANOVA tests for individual conditions
 # --------------------
-# The prediction is that within each condition, subjects will give different ratings 
+# The prediction is that within each condition, subjects will give different ratings
 # for the different explanations
 
 # Food allergy
 cat(sprintf("\n=========================\n"))
 cat(sprintf("Food allergy (didn't eat) ANOVA:\n"))
-dfood2 <- processedData_long %>% 
+dfood2 <- processedData_long %>%
             filter(Story == "food allergy", Case=="didn't eat", expl != "Explanation.7")
 print(summary(aov(rating ~ expl + Error(Subject/expl), data=dfood2)))
 
@@ -221,7 +226,7 @@ print(summary(aov(rating ~ expl + Error(Subject/expl), data=dfood2)))
 
 cat(sprintf("\n=========================\n"))
 cat(sprintf("Food allergy (ate) ANOVA:\n"))
-dfood1 <- processedData_long %>% 
+dfood1 <- processedData_long %>%
             filter(Story == "food allergy", Case=="ate", expl != "Explanation.7")
 print(summary(aov(rating ~ expl + Error(Subject/expl), data=dfood1)))
 
@@ -229,34 +234,34 @@ print(summary(aov(rating ~ expl + Error(Subject/expl), data=dfood1)))
 # Robbery
 cat(sprintf("\n=========================\n"))
 cat(sprintf("Robbery (arrested) ANOVA:\n"))
-drobbery1 <- processedData_long %>% 
+drobbery1 <- processedData_long %>%
             filter(Story == "robbery", Case=="arrested", expl != "Explanation.7")
 print(summary(aov(rating ~ expl + Error(Subject/expl), data=drobbery1)))
 
 
 cat(sprintf("\n=========================\n"))
 cat(sprintf("Robbery (didn't arrest) ANOVA:\n"))
-drobbery2 <- processedData_long %>% 
+drobbery2 <- processedData_long %>%
             filter(Story == "robbery", Case=="didn't arrest", expl != "Explanation.7")
 print(summary(aov(rating ~ expl + Error(Subject/expl), data=drobbery2)))
 
 # Locks and keys
 cat(sprintf("\n=========================\n"))
 cat(sprintf("Locks (got keys) ANOVA:\n"))
-dlocks1 <- processedData_long %>% 
+dlocks1 <- processedData_long %>%
             filter(Story == "locks", Case=="got keys", expl != "Explanation.7")
 print(summary(aov(rating ~ expl + Error(Subject/expl), data=dlocks1)))
 
 cat(sprintf("\n=========================\n"))
 cat(sprintf("Locks (didn't get keys) ANOVA:\n"))
-dlocks2 <- processedData_long %>% 
+dlocks2 <- processedData_long %>%
             filter(Story == "locks", Case=="didn't get keys", expl != "Explanation.7")
 print(summary(aov(rating ~ expl + Error(Subject/expl), data=dlocks2)))
 
 # Compute the t-tests
 # We are specifically comparing Explanation 6 across the two cases of each story.
 # These explanations provide rational support in both cases, but one explanation is
-# simpler. For example, consider the robbery story. 
+# simpler. For example, consider the robbery story.
 #
 # Case 1: arrested the culprit
 #	Explanation 6: knew that he had robbed the liquor store, the drug store, and the grocery store
@@ -272,30 +277,30 @@ cat(sprintf("Food allergy t-test result (didn't eat vs. ate):\n"))
 
 pdFood <- processedData %>% filter(Story == "food allergy") %>%
                             select(Subject, Story, Case, Explanation.6)
-print(t.test(pdFood %>% filter(Case=="didn't eat") %>% select(Explanation.6), 
-      pdFood %>% filter(Case=="ate") %>% select(Explanation.6), 
+print(t.test(pdFood %>% filter(Case=="didn't eat") %>% select(Explanation.6),
+      pdFood %>% filter(Case=="ate") %>% select(Explanation.6),
 	  alternative = c("less"), var.equal = TRUE))
-	  
+
 # Robbery
 cat(sprintf("\n=========================\n"))
 cat(sprintf("Robbery t-test result (didn't arrest vs. did arrest):\n"))
 
 pdRobbery <- processedData %>% filter(Story == "robbery") %>%
                             select(Subject, Story, Case, Explanation.6)
-print(t.test(pdRobbery %>% filter(Case=="didn't arrest") %>% select(Explanation.6), 
-      pdRobbery %>% filter(Case=="arrested") %>% select(Explanation.6), 
+print(t.test(pdRobbery %>% filter(Case=="didn't arrest") %>% select(Explanation.6),
+      pdRobbery %>% filter(Case=="arrested") %>% select(Explanation.6),
 	  alternative = c("less"), var.equal = TRUE))
-	  
+
 # Locks
 cat(sprintf("\n=========================\n"))
 cat(sprintf("Locks t-test result (got keys vs. didn't get keys):\n"))
 
 pdLocks <- processedData %>% filter(Story == "locks") %>%
                             select(Subject, Story, Case, Explanation.6)
-print(t.test(pdLocks %>% filter(Case=="got keys") %>% select(Explanation.6), 
-      pdLocks %>% filter(Case=="didn't get keys") %>% select(Explanation.6), 
+print(t.test(pdLocks %>% filter(Case=="got keys") %>% select(Explanation.6),
+      pdLocks %>% filter(Case=="didn't get keys") %>% select(Explanation.6),
 	  alternative = c("less"), var.equal = TRUE))
-	  
+
 
 # Make plots
 
@@ -305,7 +310,7 @@ predictions <- read.csv("../Model/predictions/predictions_tidy.csv")
 predictions <- predictions %>% unite("f", c("Feature.1", "Feature.2", "Feature.3"))
 
 # Plot model predictions
-print(ggplot(predictions, 
+print(ggplot(predictions,
              aes(x=fct_rev(fct_reorder(f, Probability)), y=Probability, fill=Probability)) +
              geom_col() +
              guides(fill=FALSE) +
@@ -332,7 +337,7 @@ pdFoodNoEatMeans <- pdFoodNoEat %>% group_by(expl) %>%
                                               CI = CImult*std/sqrt(n)) %>%
                                     mutate(prob = predictions$Probability)
 
-print(ggplot(pdFoodNoEatMeans, 
+print(ggplot(pdFoodNoEatMeans,
              aes(x=fct_rev(fct_reorder(expl, prob)), y=m, fill=prob)) +
              geom_col() +
              geom_errorbar(aes(x=fct_rev(fct_reorder(expl, prob)), ymin=m-CI, ymax=m+CI), width=0.2) +
@@ -357,7 +362,7 @@ pdFoodAteMeans <- pdFoodAte %>% group_by(expl) %>%
                                               CI = CImult*std/sqrt(n)) %>%
                                     mutate(prob = predictions$Probability)
 
-print(ggplot(pdFoodAteMeans, 
+print(ggplot(pdFoodAteMeans,
              aes(x=fct_rev(fct_reorder(expl, prob)), y=m, fill=prob)) +
              geom_col() +
              geom_errorbar(aes(x=fct_rev(fct_reorder(expl, prob)), ymin=m-CI, ymax=m+CI), width=0.2) +
@@ -369,7 +374,7 @@ print(ggplot(pdFoodAteMeans,
              ylim(0,7) +
              ggtitle("Food allergy, Ate"))
 #ggsave("data_allergy_ate.pdf", width=1.5, height=1.4, units="in")
-             
+
 # Robbery, Arrested
 pdRobberyArrested <- processedData_long %>%
                      filter(Story == "robbery", Case == "arrested",
@@ -382,7 +387,7 @@ pdRobberyArrestedMeans <- pdRobberyArrested %>% group_by(expl) %>%
                                                 CI = CImult*std/sqrt(n)) %>%
                                                 mutate(prob = predictions$Probability)
 
-print(ggplot(pdRobberyArrestedMeans, 
+print(ggplot(pdRobberyArrestedMeans,
              aes(x=fct_rev(fct_reorder(expl, prob)), y=m, fill=prob)) +
              geom_col() +
              geom_errorbar(aes(x=fct_rev(fct_reorder(expl, prob)), ymin=m-CI, ymax=m+CI), width=0.2) +
@@ -407,7 +412,7 @@ pdRobberyNoArrestMeans <- pdRobberyNoArrest %>% group_by(expl) %>%
                                                 CI = CImult*std/sqrt(n)) %>%
                                                 mutate(prob = predictions$Probability)
 
-print(ggplot(pdRobberyNoArrestMeans, 
+print(ggplot(pdRobberyNoArrestMeans,
              aes(x=fct_rev(fct_reorder(expl, prob)), y=m, fill=prob)) +
              geom_col() +
              geom_errorbar(aes(x=fct_rev(fct_reorder(expl, prob)), ymin=m-CI, ymax=m+CI), width=0.2) +
@@ -420,7 +425,7 @@ print(ggplot(pdRobberyNoArrestMeans,
              ggtitle("Robbery, Didn't arrest"))
 #ggsave("data_robbery_noarrest.pdf", width=1.5, height=1.4, units="in")
 
-             
+
 # Locks, Got keys
 pdLocksGotKeys <- processedData_long %>%
                   filter(Story == "locks", Case == "got keys",
@@ -433,7 +438,7 @@ pdLocksGotKeysMeans <- pdLocksGotKeys %>% group_by(expl) %>%
                                           CI = CImult*std/sqrt(n)) %>%
                                           mutate(prob = predictions$Probability)
 
-print(ggplot(pdLocksGotKeysMeans, 
+print(ggplot(pdLocksGotKeysMeans,
              aes(x=fct_rev(fct_reorder(expl, prob)), y=m, fill=prob)) +
              geom_col() +
              geom_errorbar(aes(x=fct_rev(fct_reorder(expl, prob)), ymin=m-CI, ymax=m+CI), width=0.2) +
@@ -458,7 +463,7 @@ pdLocksNoKeysMeans <- pdLocksNoKeys %>% group_by(expl) %>%
                                           CI = CImult*std/sqrt(n)) %>%
                                           mutate(prob = predictions$Probability)
 
-print(ggplot(pdLocksNoKeysMeans, 
+print(ggplot(pdLocksNoKeysMeans,
              aes(x=fct_rev(fct_reorder(expl, prob)), y=m, fill=prob)) +
              geom_col() +
              geom_errorbar(aes(x=fct_rev(fct_reorder(expl, prob)), ymin=m-CI, ymax=m+CI), width=0.2) +
