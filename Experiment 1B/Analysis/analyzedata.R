@@ -609,7 +609,7 @@ print(ggplot(data=dataAndPredictions_simplicity,
 ggsave("simplicity_results_expt1b.pdf", width=3.5, height=2.5, units="in")
 
 print(ggplot(data=dataAndPredictions_rationalsupport,
-             aes(x=prediction, y=m, color=condition, label=explanation)) +
+             aes(x=prediction, y=m, color=condition, shape=condition, label=explanation)) +
              geom_point(size=0.8) +
              ylim(0,7) +
              #xlim(0,0.2) +
